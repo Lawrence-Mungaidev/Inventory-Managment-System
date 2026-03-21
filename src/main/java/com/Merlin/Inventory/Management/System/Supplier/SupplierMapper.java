@@ -1,0 +1,21 @@
+package com.Merlin.Inventory.Management.System.Supplier;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class SupplierMapper {
+
+    public Supplier toSupplier(SupplierDto dto) {
+        Supplier supplier = new Supplier();
+        supplier.setSupplierName(dto.supplierName());
+        supplier.setContactNumber(dto.contactNumber());
+        supplier.setAddress(dto.address());
+
+        return supplier;
+    }
+
+    public SupplierResponseDto toSupplierResponseDto(Supplier supplier) {
+        return new SupplierResponseDto(supplier.getSupplierName(),supplier.getContactName(), supplier.getContactNumber(), supplier.getAddress(), supplier.isActive());
+    }
+
+}
