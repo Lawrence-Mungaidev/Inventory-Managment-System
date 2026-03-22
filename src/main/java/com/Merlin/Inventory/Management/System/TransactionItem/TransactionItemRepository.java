@@ -1,4 +1,6 @@
 package com.Merlin.Inventory.Management.System.TransactionItem;
 
-public interface TransactionItemRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface TransactionItemRepository extends JpaRepository<TransactionItem, Long> {
 }

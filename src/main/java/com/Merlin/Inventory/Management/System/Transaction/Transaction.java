@@ -34,7 +34,7 @@ public class Transaction {
             name = "user_id"
     )
     @JsonBackReference
-    private User user;
+    private User createdBy;
 
     @OneToMany(
             mappedBy = "transaction",

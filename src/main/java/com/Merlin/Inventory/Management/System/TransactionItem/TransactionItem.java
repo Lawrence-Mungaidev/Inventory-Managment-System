@@ -33,11 +33,12 @@ public class TransactionItem {
     @JsonBackReference
     private Transaction transaction;
 
-    protected TransactionItem(){ }
+    public TransactionItem(){ }
 
     public TransactionItem(Product product, int quantity) {
         this.product = product;
         this.quantity = quantity;
+        this.price = product.getSellingPrice();
         this.subtotal = product.getSellingPrice()
                 .multiply(BigDecimal.valueOf(quantity));
     }

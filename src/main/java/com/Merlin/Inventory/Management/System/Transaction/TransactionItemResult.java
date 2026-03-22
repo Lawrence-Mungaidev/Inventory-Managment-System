@@ -2,12 +2,11 @@ package com.Merlin.Inventory.Management.System.Transaction;
 
 import com.Merlin.Inventory.Management.System.TransactionItem.TransactionItem;
 
+import java.math.BigDecimal;
 import java.util.List;
 
-public record TransactionDTO(
-        List<TransactionItemRequest> items,
-        PaymentMethod paymentMethod,
-        String phoneNumber
-
+public record TransactionItemResult(
+        List<TransactionItem> transactionItemList,
+        BigDecimal totalAmount
 ) {
 }
