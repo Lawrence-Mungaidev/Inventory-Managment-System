@@ -123,7 +123,7 @@ public class StockService {
     }
 
     public List<StockResponseDto> getAllStocksApproved(Status status){
-        return stockRepository.findAllStocksStatusApproved(status)
+        return stockRepository.findAllByStatus(status)
                 .stream()
                 .map(stockMapper :: toStockResponseDto)
                 .toList();

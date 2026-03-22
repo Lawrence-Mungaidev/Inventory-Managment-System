@@ -63,8 +63,8 @@ public class UserService {
         return userMapper.toUserResponseDto(userRepository.save(user));
     }
 
-    public List<UserResponseDto> findUserByName(String name){
-        return userRepository.findByNameContaining(name)
+    public List<UserResponseDto> findUserByName(String firstName, String lastName){
+        return userRepository.findByFirstNameContainingOrLastNameContaining(firstName, lastName)
                 .stream()
                 .map(userMapper :: toUserResponseDto)
                 .toList();

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface StockRepository extends JpaRepository<Stock, Long> {
 
-    List<Stock> findAllStocksStatusApproved(Status status);
+    List<Stock> findAllByStatus(Status status);
     List<Stock> findAllStocksByProduct(Long productId);
     List<Stock> findAllStocksBySupplier(Long supplierId);
 

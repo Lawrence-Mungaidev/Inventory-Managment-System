@@ -36,8 +36,7 @@ public class User implements UserDetails {
     private boolean mustChangePassword = false;
 
     @OneToMany(
-            mappedBy = "user",
-            cascade = CascadeType.ALL)
+            mappedBy = "createdBy")
     @JsonManagedReference
     private List<Transaction> transaction;
 

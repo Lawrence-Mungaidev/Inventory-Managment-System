@@ -1,7 +1,9 @@
 package com.Merlin.Inventory.Management.System.Auth;
 
 import com.Merlin.Inventory.Management.System.User.User;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AuthenticationMapper {
 
     public User toUser(AuthRegisterDto dto){
