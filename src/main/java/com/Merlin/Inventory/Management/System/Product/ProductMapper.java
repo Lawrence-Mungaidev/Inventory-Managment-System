@@ -13,6 +13,8 @@ public class ProductMapper {
         product.setDescription(dto.description());
         product.setSellingPrice(dto.sellingPrice());
         product.setMinimumQuantity(dto.minimumQuantity());
+        product.setActive(true);
+        product.setCurrentStock(0);
 
         return product;
     }

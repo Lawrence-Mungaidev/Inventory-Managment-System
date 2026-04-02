@@ -25,6 +25,7 @@ public class Product {
     private String productName;
     private String description;
     private Integer currentStock;
+    private BigDecimal buyingPrice;
     private BigDecimal sellingPrice;
     private int minimumQuantity;
     private boolean isActive;
@@ -67,6 +68,7 @@ public class Product {
     public Product(String productName, String description,BigDecimal sellingPrice, int minimumQuantity ,Supplier supplier, Category category) {
         this.productName = productName;
         this.description = description;
+        this.buyingPrice = BigDecimal.ZERO;
         this.currentStock = 0;
         this.sellingPrice = sellingPrice;
         this.minimumQuantity = minimumQuantity;

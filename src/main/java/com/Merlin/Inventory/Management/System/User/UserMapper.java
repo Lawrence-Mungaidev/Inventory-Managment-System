@@ -2,6 +2,8 @@ package com.Merlin.Inventory.Management.System.User;
 
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Component
 public class UserMapper {
 
@@ -12,6 +14,8 @@ public class UserMapper {
         user.setEmail(dto.email());
         user.setPhoneNumber(dto.phoneNumber());
         user.setRole(dto.role());
+        user.setActive(true);
+        user.setCreatedAt(LocalDate.now());
 
         return user;
     }

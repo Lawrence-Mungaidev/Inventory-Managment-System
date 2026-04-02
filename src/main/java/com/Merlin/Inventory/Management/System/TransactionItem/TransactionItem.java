@@ -23,7 +23,7 @@ public class TransactionItem {
     )
     @JsonBackReference
     private Product product;
-    private int quantity;
+    private double quantity;
     private BigDecimal price;
     private BigDecimal subtotal;
     @ManyToOne
@@ -35,7 +35,7 @@ public class TransactionItem {
 
     public TransactionItem(){ }
 
-    public TransactionItem(Product product, int quantity) {
+    public TransactionItem(Product product, double quantity) {
         this.product = product;
         this.quantity = quantity;
         this.price = product.getSellingPrice();

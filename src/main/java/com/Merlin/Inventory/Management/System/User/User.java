@@ -88,8 +88,6 @@ public class User implements UserDetails {
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.role = role;
-        this.createdAt = LocalDate.now();
-        this.isActive = true;
     }
 
     @Override

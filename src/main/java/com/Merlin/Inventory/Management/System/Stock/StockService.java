@@ -1,6 +1,6 @@
 package com.Merlin.Inventory.Management.System.Stock;
 
-import com.Merlin.Inventory.Management.System.Email.EmailService;
+
 import com.Merlin.Inventory.Management.System.Exception.ResourceNotFoundException;
 import com.Merlin.Inventory.Management.System.Notification.NotificationService;
 import com.Merlin.Inventory.Management.System.Notification.NotificationType;
@@ -25,15 +25,14 @@ public class StockService {
     private final StockMapper stockMapper;
     private final ProductRepository productRepository;
     private final SupplierRepository supplierRepository;
-    private final EmailService emailService;
     private  final UserRepository userRepository;
     private final NotificationService notificationService;
 
     public StockDto createStock(StockDto dto, User authenticatedUser) {
         Product product = productRepository.findById(dto.productId())
-                        .orElseThrow(() -> new RuntimeException("Product not found"));
+                        .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         Supplier supplier = supplierRepository.findById(dto.supplierId())
-                        .orElseThrow(() -> new RuntimeException("Supplier not found"));
+                        .orElseThrow(() -> new ResourceNotFoundException("Supplier not found"));
 
 
         Stock stock = stockMapper.toStock(dto);
@@ -50,6 +49,7 @@ public class StockService {
             stock.setApprovedBy(authenticatedUser);
             stock.setApprovalDate(LocalDate.now());
             product.setCurrentStock(product.getCurrentStock() + dto.arrivedQuantity());
+            product.setBuyingPrice(dto.buyingPrice());
             productRepository.save(product);
 
             savedStock = stockRepository.save(stock);
@@ -58,15 +58,12 @@ public class StockService {
             stock.setStatus(Status.PENDING);
             savedStock = stockRepository.save(stock);
 
-
             User admin = userRepository.findByRole(ROLE.ADMIN)
                     .orElseThrow(() -> new ResourceNotFoundException("Admin not found"));
 
            String message ="Requesting to update the new stock arrival on " + stock.getArrivalDate();
 
            notificationService.createNotification(admin,message,NotificationType.RESTOCK_REQUEST);
-
-
         }
 
         return stockMapper.toStockDto(savedStock);
@@ -84,6 +81,7 @@ public class StockService {
             stock.setApprovedBy(authenticatedUser);
             stock.setApprovalDate(LocalDate.now());
             product.setCurrentStock(product.getCurrentStock() + stock.getArrivedQuantity());
+            product.setBuyingPrice(stock.getBuyingPrice());
             productRepository.save(product);
 
             String approvedMessage="Your Stock request of " + stock.getProduct().getProductName() + " on " + stock.getArrivalDate()  + " is approved";
@@ -122,7 +120,7 @@ public class StockService {
                 .toList();
     }
 
-    public List<StockResponseDto> getAllStocksApproved(Status status){
+    public List<StockResponseDto> getStockByStatus(Status status){
         return stockRepository.findAllByStatus(status)
                 .stream()
                 .map(stockMapper :: toStockResponseDto)
@@ -130,14 +128,14 @@ public class StockService {
     }
 
     public List<StockResponseDto> getAllStocksByProduct(Long productId){
-        return stockRepository.findAllStocksByProduct(productId)
+        return stockRepository.findByProductId(productId)
                 .stream()
                 .map(stockMapper ::toStockResponseDto)
                 .toList();
     }
 
     public List<StockResponseDto> getAllStocksBySupplier(Long supplierId){
-        return stockRepository.findAllStocksBySupplier(supplierId)
+        return stockRepository.findBySupplierId(supplierId)
                 .stream()
                 .map(stockMapper :: toStockResponseDto)
                 .toList();

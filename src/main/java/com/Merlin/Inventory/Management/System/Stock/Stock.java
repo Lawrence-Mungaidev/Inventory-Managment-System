@@ -27,7 +27,8 @@ public class Stock {
     @JsonBackReference
     private Product product;
     private int arrivedQuantity;
-    private BigDecimal boughtPrice;
+    private BigDecimal buyingPrice;
+    private BigDecimal totalAmount;
 
     @ManyToOne
     @JoinColumn(
@@ -58,10 +59,10 @@ public class Stock {
 
    protected Stock(){}
 
-    public Stock(Product product, int arrivedQuantity, BigDecimal boughtPrice, Supplier supplier) {
+    public Stock(Product product, int arrivedQuantity, BigDecimal buyingPrice, Supplier supplier) {
         this.product = product;
         this.arrivedQuantity = arrivedQuantity;
-        this.boughtPrice = boughtPrice;
+        this.buyingPrice = buyingPrice;
         this.supplier = supplier;
         this.arrivalDate = LocalDate.now();
         this.status = Status.PENDING;

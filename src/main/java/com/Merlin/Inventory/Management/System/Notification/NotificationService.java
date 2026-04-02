@@ -42,5 +42,12 @@ public class NotificationService {
                 .toList();
     }
 
+    public NotificationResponseDto getNotificationById(Long notificationId){
+        Notification notification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Notification not found"));
+
+        return notificationMapper.toNotificationResponseDto(notification);
+    }
+
 
 }

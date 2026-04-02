@@ -2,6 +2,7 @@ package com.Merlin.Inventory.Management.System.Supplier;
 
 import com.Merlin.Inventory.Management.System.Exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class SupplierService {
             supplier.setSupplierName(dto.supplierName());
         }
         if(dto.contactName() != null) {
-            supplier.setSupplierName(dto.contactName());
+            supplier.setContactName(dto.contactName());
         }
         if (dto.contactNumber() != null) {
             supplier.setContactNumber(dto.contactNumber());
@@ -86,5 +87,11 @@ public class SupplierService {
         return supplierMapper.toSupplierResponseDto(supplier);
     }
 
+    public List<SupplierResponseDto> getActiveSuppliers(){
+        return supplierRepository.findByIsActiveTrue(Sort.by("supplierName").ascending())
+                .stream()
+                .map(supplierMapper ::toSupplierResponseDto)
+                .toList();
+    }
 
 }

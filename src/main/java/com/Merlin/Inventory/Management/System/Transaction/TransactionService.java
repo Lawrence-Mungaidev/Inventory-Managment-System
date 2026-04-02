@@ -50,6 +50,7 @@ public class TransactionService {
             transactionItems.forEach(item -> {
                 item.setTransaction(savedTransaction);
                 transactionItemRepository.save(item);
+                savedTransaction.setTransactionItems(transactionItems);
             });
         } else if (dto.paymentMethod().equals(PaymentMethod.MPESA)) {
             transaction.setStatus(Status.PENDING);
@@ -58,6 +59,7 @@ public class TransactionService {
             transactionItems.forEach(item -> {
                 item.setTransaction(savedTransaction);
                 transactionItemRepository.save(item);
+                savedTransaction.setTransactionItems(transactionItems);
             });
         } else {
             savedTransaction = null;

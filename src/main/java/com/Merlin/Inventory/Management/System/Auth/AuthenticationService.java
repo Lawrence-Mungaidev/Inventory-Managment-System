@@ -11,6 +11,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -25,6 +27,7 @@ public class AuthenticationService {
         User user = authenticationMapper.toUser(dto);
         var password = passwordEncoder.encode(dto.password());
         user.setPassword(password);
+
 
         int numberOfAdmin = userRepository.countByRole(ROLE.ADMIN);
 

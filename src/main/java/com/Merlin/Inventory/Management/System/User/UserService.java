@@ -20,7 +20,7 @@ public class UserService {
 
     public UserResponseDto createUser(UserDto dto){
         User user = userMapper.toUser(dto);
-        var password = passwordEncoder.encode(user.getPassword());
+        var password = passwordEncoder.encode(dto.password());
 
         user.setPassword(password);
 
@@ -43,7 +43,8 @@ public class UserService {
                 .toList();
     }
 
-    public UserResponseDto updateUser(Long userId, UserDto dto){
+    public UserResponseDto updateUser(User authenticatedUser, UserDto dto){
+        Long userId = authenticatedUser.getUserId();
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
@@ -109,7 +110,7 @@ public class UserService {
         userRepository.save(authenticatedUser);
     }
 
-    public void forgotPassword(String userEmail){
+    public ForgortResponse forgotPassword(String userEmail){
 
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -123,6 +124,10 @@ public class UserService {
 
       emailService.sendEmail(userEmail,"FORGOT PASSWORD", tempPassword);
       user.setMustChangePassword(true);
+
+      String message ="A temporary password has been sent to" + user.getEmail();
+
+      return new ForgortResponse(message);
     }
 
     public String generateTempPassword(){

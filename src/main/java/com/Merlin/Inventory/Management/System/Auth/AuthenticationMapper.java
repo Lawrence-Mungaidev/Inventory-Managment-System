@@ -3,6 +3,8 @@ package com.Merlin.Inventory.Management.System.Auth;
 import com.Merlin.Inventory.Management.System.User.User;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Component
 public class AuthenticationMapper {
 
@@ -13,6 +15,8 @@ public class AuthenticationMapper {
         user.setEmail(dto.email());
         user.setPhoneNumber(dto.phoneNumber());
         user.setRole(dto.role());
+        user.setActive(true);
+        user.setCreatedAt(LocalDate.now());
 
         return user;
     }

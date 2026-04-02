@@ -8,8 +8,10 @@ public class SupplierMapper {
     public Supplier toSupplier(SupplierDto dto) {
         Supplier supplier = new Supplier();
         supplier.setSupplierName(dto.supplierName());
+        supplier.setContactName(dto.contactName());
         supplier.setContactNumber(dto.contactNumber());
         supplier.setAddress(dto.address());
+        supplier.setActive(true);
 
         return supplier;
     }

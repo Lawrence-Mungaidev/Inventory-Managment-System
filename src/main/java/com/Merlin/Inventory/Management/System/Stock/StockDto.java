@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 public record StockDto(
         Long productId,
         Integer arrivedQuantity,
-        BigDecimal boughtPrice,
+        BigDecimal buyingPrice,
         Long supplierId
 ) {
 }

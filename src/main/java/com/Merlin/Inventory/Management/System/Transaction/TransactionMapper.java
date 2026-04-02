@@ -7,36 +7,23 @@ import com.Merlin.Inventory.Management.System.TransactionItem.TransactionItem;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class TransactionMapper {
 
-    ProductRepository productRepository;
+   private final ProductRepository productRepository;
 
     public Transaction toTransaction(TransactionDTO dto){
         Transaction transaction = new Transaction();
 
-        List<TransactionItem> transactionItems = dto.items()
-                        .stream()
-                        .map(this::toTransactionItem)
-                        .toList();
-
-        transaction.setTransactionItems(transactionItems);
-
         transaction.setPaymentMethod(dto.paymentMethod());
         transaction.setPhoneNumber(dto.phoneNumber());
+        transaction.setTransactionDate(LocalDateTime.now());
 
         return transaction;
-    }
-
-
-    public TransactionItem toTransactionItem(TransactionItemRequest transactionItemRequest){
-        Product product = productRepository.findById(transactionItemRequest.productId())
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
-
-        return new TransactionItem(product,transactionItemRequest.quantity());
     }
 
     public TransactionResponse toTransactionResponse(TransactionItem transactionItem){

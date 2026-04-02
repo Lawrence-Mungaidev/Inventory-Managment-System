@@ -73,7 +73,7 @@ public class ProductService {
         return productMapper.toProductDto(savedProduct);
     }
 
-    public List<ProductDto> findAll(){
+    public List<ProductDto> findAllActiveProducts(){
         return productRepository.findByIsActiveTrue(Sort.by("productName").ascending())
                 .stream()
                 .map(productMapper :: toProductDto)
@@ -110,8 +110,8 @@ public class ProductService {
         productRepository.save(product);
     }
 
-    public List<ProductDto> getActiveProductByProductName(String productName){
-        return productRepository.findByProductNameContainingAndIsActiveTrue(productName)
+    public List<ProductDto> findAll(){
+        return productRepository.findAll(Sort.by("productName").ascending())
                 .stream()
                 .map(productMapper :: toProductDto)
                 .toList();

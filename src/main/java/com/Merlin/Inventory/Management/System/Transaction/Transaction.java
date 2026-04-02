@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -41,7 +42,7 @@ public class Transaction {
             cascade = CascadeType.ALL
     )
     @JsonManagedReference
-    private List<TransactionItem> transactionItems;
+    private List<TransactionItem> transactionItems = new ArrayList<>();
 
     protected Transaction() {}
 
