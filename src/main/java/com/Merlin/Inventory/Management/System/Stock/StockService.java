@@ -90,7 +90,7 @@ public class StockService {
 
             if (product.getCurrentStock() < product.getMinimumQuantity()) {
                 String lowStock = "Product: " + product.getProductName() +  " is still below the minimum quantity";
-                notificationService.createNotification(authenticatedUser,"Stock is still low" , NotificationType.LOW_STOCK);
+                notificationService.createNotification(authenticatedUser,lowStock , NotificationType.LOW_STOCK);
             }
 
         }

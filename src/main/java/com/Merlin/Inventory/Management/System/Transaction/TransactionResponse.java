@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public record TransactionResponse(
         String productName,
-        int quantity,
+        double quantity,
         BigDecimal price,
         BigDecimal totalPrice
 ) {

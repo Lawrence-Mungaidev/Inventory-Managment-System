@@ -24,10 +24,11 @@ public class Product {
     private Long id;
     private String productName;
     private String description;
-    private Integer currentStock;
+    private Double currentStock;
     private BigDecimal buyingPrice;
     private BigDecimal sellingPrice;
-    private int minimumQuantity;
+    private double minimumQuantity;
+    private boolean countable;
     private boolean isActive;
     @ManyToOne
     @JoinColumn(
@@ -65,13 +66,14 @@ public class Product {
 
     }
 
-    public Product(String productName, String description,BigDecimal sellingPrice, int minimumQuantity ,Supplier supplier, Category category) {
+    public Product(String productName, String description,BigDecimal sellingPrice, double minimumQuantity, boolean countable ,Supplier supplier, Category category) {
         this.productName = productName;
         this.description = description;
         this.buyingPrice = BigDecimal.ZERO;
-        this.currentStock = 0;
+        this.currentStock = 0.0;
         this.sellingPrice = sellingPrice;
         this.minimumQuantity = minimumQuantity;
+        this.countable = countable;
         this.supplier = supplier;
         this.category = category;
         this.isActive = true;

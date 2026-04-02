@@ -76,6 +76,14 @@ public class TransactionService {
             Product product = productRepository.findById(itemRequest.productId())
                     .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
+            if(!product.isActive()){
+                throw new RuntimeException(product.getProductName() + " is no longer available");
+            }
+
+            if(product.isCountable() && itemRequest.quantity() != Math.floor(itemRequest.quantity())){
+                throw new RuntimeException(product.getProductName() + " must be sold in whole numbers");
+            }
+
             if (product.getCurrentStock() < itemRequest.quantity()){
                 throw new RuntimeException(product.getProductName() + " not enough stock");
             }

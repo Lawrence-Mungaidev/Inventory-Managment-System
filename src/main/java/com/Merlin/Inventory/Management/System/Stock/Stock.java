@@ -26,7 +26,7 @@ public class Stock {
     )
     @JsonBackReference
     private Product product;
-    private int arrivedQuantity;
+    private double arrivedQuantity;
     private BigDecimal buyingPrice;
     private BigDecimal totalAmount;
 
@@ -59,7 +59,7 @@ public class Stock {
 
    protected Stock(){}
 
-    public Stock(Product product, int arrivedQuantity, BigDecimal buyingPrice, Supplier supplier) {
+    public Stock(Product product, double arrivedQuantity, BigDecimal buyingPrice, Supplier supplier) {
         this.product = product;
         this.arrivedQuantity = arrivedQuantity;
         this.buyingPrice = buyingPrice;
