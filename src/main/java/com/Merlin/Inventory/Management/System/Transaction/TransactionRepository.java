@@ -16,5 +16,6 @@ public interface TransactionRepository extends JpaRepository<Transaction,Long> {
     int countByTransactionDateBetween(LocalDateTime start, LocalDateTime end);
 
     Optional<Transaction> findByMpesaReference(String mpesaReference);
+    List<Transaction> findByTransactionStatus(Status status);
 }
 
