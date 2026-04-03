@@ -3,6 +3,7 @@ package com.Merlin.Inventory.Management.System.Report;
 import com.Merlin.Inventory.Management.System.Stock.StockRepository;
 import com.Merlin.Inventory.Management.System.StockAdjustment.StockAdjustment;
 import com.Merlin.Inventory.Management.System.StockAdjustment.StockAdjustmentRepository;
+import com.Merlin.Inventory.Management.System.Transaction.Status;
 import com.Merlin.Inventory.Management.System.Transaction.Transaction;
 import com.Merlin.Inventory.Management.System.Transaction.TransactionRepository;
 import com.Merlin.Inventory.Management.System.TransactionItem.TransactionItem;
@@ -36,7 +37,7 @@ public class ReportService {
 
         if(totalSales == null) totalSales = BigDecimal.ZERO;
 
-        int numberOfTransactions = transactionRepository.countByTransactionDateBetween(start,end);
+        int numberOfTransactions = transactionRepository.countByTransactionDateBetweenAndStatus(start,end, Status.COMPLETED);
         List<ItemsSold> soldItems = buildItemsSold(transactionList);
 
         return new DailyReportDto(today, totalSales,numberOfTransactions,soldItems);
@@ -50,13 +51,13 @@ public class ReportService {
 
         BigDecimal totalSales = transactionRepository.getTotalSalesByDateBetween(startOfMonth, endOfMonth);
         if(totalSales == null) totalSales = BigDecimal.ZERO;
-        int numberOfTransactions = transactionRepository.countByTransactionDateBetween(startOfMonth,endOfMonth);
+        int numberOfTransactions = transactionRepository.countByTransactionDateBetweenAndStatus(startOfMonth,endOfMonth,Status.COMPLETED);
         List<ItemsSold> soldItems = buildMostSoldItems(transactionList);
 
         LocalDate start = LocalDate.now().withDayOfMonth(1);
         LocalDate end = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
 
-        BigDecimal totalStockSales = stockRepository.getTotalSalesByDateBetween(start,end);
+        BigDecimal totalStockSales = stockRepository.getTotalSalesByApprovalDateBetween(start,end);
 
         BigDecimal profit = totalSales.subtract(totalStockSales);
 
@@ -118,14 +119,14 @@ public class ReportService {
 
         BigDecimal totalSales = transactionRepository.getTotalSalesByDateBetween(start.atStartOfDay(), end.atTime(23,59,59));
         if(totalSales == null) totalSales = BigDecimal.ZERO;
-        int numberOfTransactions = transactionRepository.countByTransactionDateBetween(start.atStartOfDay(), end.atTime(23,59,59));
+        int numberOfTransactions = transactionRepository.countByTransactionDateBetweenAndStatus(start.atStartOfDay(), end.atTime(23,59,59),Status.COMPLETED);
 
         List<ItemsSold> soldItems = buildMostSoldItems(transactionList);
 
         LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
         LocalDate endOfMonth = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
 
-        BigDecimal totalStockSales = stockRepository.getTotalSalesByDateBetween(startOfMonth,endOfMonth);
+        BigDecimal totalStockSales = stockRepository.getTotalSalesByApprovalDateBetween(startOfMonth,endOfMonth);
 
         BigDecimal profit = totalSales.subtract(totalStockSales);
 

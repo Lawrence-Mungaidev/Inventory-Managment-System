@@ -12,6 +12,6 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
     List<Stock> findAllByStatus(Status status);
     List<Stock> findByProductId(Long productId);
     List<Stock> findBySupplierId(Long supplierId);
-    BigDecimal getTotalSalesByDateBetween(LocalDate startOfMonth, LocalDate endOfMonth);
+    BigDecimal getTotalSalesByApprovalDateBetween(LocalDate startOfMonth, LocalDate endOfMonth);
 
 }

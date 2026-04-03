@@ -6,7 +6,7 @@ public record ProductDto(
         String productName,
         String description,
         BigDecimal sellingPrice,
-        Integer minimumQuantity ,
+        Double minimumQuantity ,
         Long supplierId,
         Long categoryId
 ) {

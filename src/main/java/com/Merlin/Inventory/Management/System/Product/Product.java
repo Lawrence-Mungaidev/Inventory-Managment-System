@@ -27,7 +27,7 @@ public class Product {
     private Double currentStock;
     private BigDecimal buyingPrice;
     private BigDecimal sellingPrice;
-    private double minimumQuantity;
+    private Double minimumQuantity;
     private boolean countable;
     private boolean isActive;
     @ManyToOne

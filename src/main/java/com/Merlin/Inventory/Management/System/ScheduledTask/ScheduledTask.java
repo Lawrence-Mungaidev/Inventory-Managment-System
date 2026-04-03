@@ -30,7 +30,7 @@ public class ScheduledTask {
 
     @Scheduled(cron = "0 30 22 * * *")
     public void scheduledTask(){
-        List<Transaction> transactions = transactionRepository.findByTransactionStatus(Status.CANCELLED);
+        List<Transaction> transactions = transactionRepository.findByStatus(Status.CANCELLED);
         transactions.forEach(transactionRepository::delete);
 
         LocalDateTime start = LocalDate.now().atStartOfDay();
