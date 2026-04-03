@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface TransactionRepository extends JpaRepository<Transaction,Long> {
 
@@ -14,5 +15,6 @@ public interface TransactionRepository extends JpaRepository<Transaction,Long> {
     BigDecimal getTotalSalesByDateBetween(LocalDateTime start, LocalDateTime end);
     int countByTransactionDateBetween(LocalDateTime start, LocalDateTime end);
 
+    Optional<Transaction> findByMpesaReference(String mpesaReference);
 }
 

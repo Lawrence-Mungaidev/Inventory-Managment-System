@@ -1,6 +1,7 @@
 package com.Merlin.Inventory.Management.System.Transaction;
 
 import com.Merlin.Inventory.Management.System.Exception.ResourceNotFoundException;
+import com.Merlin.Inventory.Management.System.Mpesa.MpesaService;
 import com.Merlin.Inventory.Management.System.Notification.NotificationService;
 import com.Merlin.Inventory.Management.System.Notification.NotificationType;
 import com.Merlin.Inventory.Management.System.Product.Product;
@@ -29,6 +30,7 @@ public class TransactionService {
     private final TransactionItemRepository transactionItemRepository;
     private final NotificationService notificationService;
     private final UserRepository userRepository;
+    private final MpesaService mpesaService;
 
     public TransactionResponseDto create(TransactionDTO dto, User authenticatedUser) {
         Transaction transaction = transactionMapper.toTransaction(dto);
@@ -59,7 +61,17 @@ public class TransactionService {
             transactionItems.forEach(item -> {
                 item.setTransaction(savedTransaction);
                 transactionItemRepository.save(item);
-                savedTransaction.setTransactionItems(transactionItems);
+
+                String checkoutRequestId = mpesaService.initialiseSTKPush(dto.phoneNumber(), transaction.getTotalAmount());
+
+                if(checkoutRequestId != null){
+                    savedTransaction.setMpesaReference(checkoutRequestId);
+                    savedTransaction.setTransactionItems(transactionItems);
+                }else{
+                    throw new RuntimeException("STK push failed Please try again");
+                }
+
+
             });
         } else {
             savedTransaction = null;
@@ -96,7 +108,7 @@ public class TransactionService {
         return new TransactionItemResult(transactionItems, totalAmount);
     }
 
-    private void deductStock(List<TransactionItem> transactionItem){
+    public void deductStock(List<TransactionItem> transactionItem){
         for( TransactionItem itemRequest: transactionItem){
             Product product = itemRequest.getProduct();
 
