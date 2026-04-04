@@ -61,18 +61,19 @@ public class TransactionService {
             transactionItems.forEach(item -> {
                 item.setTransaction(savedTransaction);
                 transactionItemRepository.save(item);
+            });
 
-                String checkoutRequestId = mpesaService.initialiseSTKPush(dto.phoneNumber(), transaction.getTotalAmount());
+            String checkoutRequestId = mpesaService.initialiseSTKPush(dto.phoneNumber(), transaction.getTotalAmount());
 
                 if(checkoutRequestId != null){
                     savedTransaction.setMpesaReference(checkoutRequestId);
                     savedTransaction.setTransactionItems(transactionItems);
+                    transactionRepository.save(savedTransaction);
                 }else{
                     throw new RuntimeException("STK push failed Please try again");
                 }
 
 
-            });
         } else {
             savedTransaction = null;
         }

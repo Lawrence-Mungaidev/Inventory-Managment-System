@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/mpesa")
@@ -16,8 +18,8 @@ public class MpesaController {
 
     private final MpesaService mpesaService;
 
-    @PostMapping("/callbacks")
-    public ResponseEntity<Void> handleCallBack(@RequestBody JsonNode callbackData){
+    @PostMapping("/callback")
+    public ResponseEntity<Void> handleCallBack(@RequestBody Map<String, Object> callbackData){
         mpesaService.handleCallBack(callbackData);
         return ResponseEntity.ok().build();
     }
