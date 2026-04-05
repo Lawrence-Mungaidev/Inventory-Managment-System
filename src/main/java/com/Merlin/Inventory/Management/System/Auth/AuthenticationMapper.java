@@ -1,5 +1,6 @@
 package com.Merlin.Inventory.Management.System.Auth;
 
+import com.Merlin.Inventory.Management.System.User.ROLE;
 import com.Merlin.Inventory.Management.System.User.User;
 import org.springframework.stereotype.Component;
 
@@ -14,9 +15,9 @@ public class AuthenticationMapper {
         user.setLastName(dto.lastName());
         user.setEmail(dto.email());
         user.setPhoneNumber(dto.phoneNumber());
-        user.setRole(dto.role());
         user.setActive(true);
         user.setCreatedAt(LocalDate.now());
+        user.setRole(ROLE.ADMIN);
 
         return user;
     }

@@ -10,8 +10,7 @@ public record TransactionResponseDto(
         String cashierName,
         List<TransactionResponse> items,
         BigDecimal totalAmount,
-        PaymentMethod paymentMethod,
-        String mpesaMessage,
-        Status status
+        PaymentMethod paymentMethod
+
 ) {
 }

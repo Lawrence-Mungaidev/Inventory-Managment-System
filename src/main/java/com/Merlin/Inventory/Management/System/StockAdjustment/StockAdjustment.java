@@ -23,7 +23,7 @@ public class StockAdjustment {
     )
     @JsonBackReference
     private Product product;
-    private int quantity;
+    private Double quantity;
     @Enumerated(EnumType.STRING)
     private AdjustmentType adjustmentType;
     private String reason;
@@ -47,7 +47,7 @@ public class StockAdjustment {
 
    protected StockAdjustment(){ }
 
-    public StockAdjustment(Product product, int quantity, AdjustmentType adjustmentType, String reason) {
+    public StockAdjustment(Product product, Double quantity, AdjustmentType adjustmentType, String reason) {
         this.product = product;
         this.quantity = quantity;
         this.adjustmentType = adjustmentType;

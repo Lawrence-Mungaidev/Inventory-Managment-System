@@ -1,5 +1,6 @@
 package com.Merlin.Inventory.Management.System.Supplier;
 
+import com.Merlin.Inventory.Management.System.Exception.BusinessRuleException;
 import com.Merlin.Inventory.Management.System.Exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -51,7 +52,7 @@ public class SupplierService {
         if(supplier.getProduct().isEmpty()){
             supplierRepository.delete(supplier);
         }else {
-            throw new RuntimeException("Cannot delete this supplier because supplier has products linked");
+            throw new BusinessRuleException("Cannot delete this supplier because supplier has products linked");
         }
     }
 

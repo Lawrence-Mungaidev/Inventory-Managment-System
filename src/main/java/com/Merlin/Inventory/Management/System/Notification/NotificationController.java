@@ -1,6 +1,7 @@
 package com.Merlin.Inventory.Management.System.Notification;
 
 import com.Merlin.Inventory.Management.System.User.User;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class NotificationController {
     private final NotificationService  notificationService;
 
     @PatchMapping("/markasread/{notificationId}")
-    public ResponseEntity<Void> markAsRead(@PathVariable Long notificationId){
+    public ResponseEntity<Void> markAsRead(@Valid @PathVariable Long notificationId){
         notificationService.markNotificationAsRead(notificationId);
         return ResponseEntity.noContent().build();
     }

@@ -1,5 +1,6 @@
 package com.Merlin.Inventory.Management.System.Mpesa;
 
+import com.Merlin.Inventory.Management.System.Exception.PaymentException;
 import com.Merlin.Inventory.Management.System.Exception.ResourceNotFoundException;
 import com.Merlin.Inventory.Management.System.Notification.NotificationService;
 import com.Merlin.Inventory.Management.System.Notification.NotificationType;
@@ -72,6 +73,7 @@ public class MpesaService {
     public String initialiseSTKPush(String phoneNumber, BigDecimal amount){
         String timeStamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         String password = Base64.getEncoder().encodeToString((shortCode + passkey + timeStamp).getBytes());
+        String formattedPhone = "254" + phoneNumber.substring(1);
 
         Map<String,Object> request = new HashMap<>();
         request.put("BusinessShortCode", shortCode);
@@ -81,7 +83,7 @@ public class MpesaService {
         request.put("Amount", amount.intValue());
         request.put("PartyA", phoneNumber);
         request.put("PartyB", shortCode);
-        request.put("PhoneNumber", phoneNumber);
+        request.put("PhoneNumber", formattedPhone);
         request.put("CallBackURL", callbackUrl);
         request.put("AccountReference","Inventory Management System");
         request.put("TransactionDesc", "payment");
@@ -94,7 +96,7 @@ public class MpesaService {
                 .onStatus(status -> status.is4xxClientError(), response ->
                         response.bodyToMono(String.class)
                                 .doOnNext(body-> System.out.println("STK PUSH Error " + body))
-                                .then(Mono.error(new RuntimeException("STK PUSH FAILED"))))
+                                .then(Mono.error(new PaymentException("STK PUSH FAILED"))))
                 .bodyToMono(Map.class)
                 .doOnNext(response -> System.out.println("STK Response: " + response))
                 .map(response ->(String) response.get("CheckoutRequestID"))
@@ -122,6 +124,10 @@ public class MpesaService {
         }
 
         transaction.setStatus(Status.COMPLETED);
+
+        String message = "Mpesa Payment of " + transaction.getTotalAmount() + " received from " + transaction.getPhoneNumber() + " for transaction Id " + transaction.getId() + " is a Success";
+
+        notificationService.createNotification(transaction.getCreatedBy(),message, NotificationType.TRANSACTION_SUCCESS);
 
         for(TransactionItem item : transaction.getTransactionItems())
         {

@@ -1,6 +1,7 @@
 package com.Merlin.Inventory.Management.System.Auth;
 
 import com.Merlin.Inventory.Management.System.Config.JwtService;
+import com.Merlin.Inventory.Management.System.Exception.BusinessRuleException;
 import com.Merlin.Inventory.Management.System.Exception.ResourceNotFoundException;
 import com.Merlin.Inventory.Management.System.User.ROLE;
 import com.Merlin.Inventory.Management.System.User.User;
@@ -32,7 +33,7 @@ public class AuthenticationService {
         int numberOfAdmin = userRepository.countByRole(ROLE.ADMIN);
 
         if(numberOfAdmin >= 1 && user.getRole().equals(ROLE.ADMIN)){
-            throw new RuntimeException("Their can only be one Admin");
+            throw new BusinessRuleException("Their can only be one Admin");
         }
 
         var savedUser = userRepository.save(user);

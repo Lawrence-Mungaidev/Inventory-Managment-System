@@ -2,6 +2,7 @@ package com.Merlin.Inventory.Management.System.Product;
 
 import com.Merlin.Inventory.Management.System.Category.Category;
 import com.Merlin.Inventory.Management.System.Category.CategoryRepository;
+import com.Merlin.Inventory.Management.System.Exception.BusinessRuleException;
 import com.Merlin.Inventory.Management.System.Exception.ResourceNotFoundException;
 import com.Merlin.Inventory.Management.System.Supplier.Supplier;
 import com.Merlin.Inventory.Management.System.Supplier.SupplierRepository;
@@ -87,7 +88,7 @@ public class ProductService {
         if (product.getStock().isEmpty() && product.getTransactionItem().isEmpty()){
             productRepository.delete(product);
         }else {
-            throw new RuntimeException("Cannot delete a product since it is linked to stock and Items sold");
+            throw new BusinessRuleException("Cannot delete a product since it is linked to stock and Items sold");
         }
 
     }

@@ -38,6 +38,6 @@ public class TransactionMapper {
                 .map(this :: toTransactionResponse)
                 .toList();
 
-        return new TransactionResponseDto(transaction.getId(), usersName, transactionResponses, transaction.getTotalAmount(), transaction.getPaymentMethod(), transaction.getMpesaReference(), transaction.getStatus());
+        return new TransactionResponseDto(transaction.getId(), usersName, transactionResponses, transaction.getTotalAmount(), transaction.getPaymentMethod());
     }
 }

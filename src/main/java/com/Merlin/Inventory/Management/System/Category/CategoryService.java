@@ -1,5 +1,6 @@
 package com.Merlin.Inventory.Management.System.Category;
 
+import com.Merlin.Inventory.Management.System.Exception.BusinessRuleException;
 import com.Merlin.Inventory.Management.System.Exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,7 @@ public class CategoryService {
         if(category.getProducts().isEmpty()){
             categoryRepository.delete(category);
         }else {
-            throw new RuntimeException("cannot delete category since it has products");
+            throw new BusinessRuleException("cannot delete category since it has products");
         }
     }
 

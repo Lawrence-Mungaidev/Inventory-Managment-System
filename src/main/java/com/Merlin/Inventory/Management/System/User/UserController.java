@@ -61,7 +61,7 @@ public class UserController {
     }
 
     @PostMapping("/forgotPassword")
-    public ResponseEntity<ForgortResponse> forgotPassword(@Valid @RequestBody String userEmail){
+    public ResponseEntity<ForgortResponse> forgotPassword(@Valid @RequestParam String userEmail){
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.forgotPassword(userEmail));
     }
 

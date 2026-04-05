@@ -13,7 +13,7 @@ public class UserMapper {
         user.setLastName(dto.lastName());
         user.setEmail(dto.email());
         user.setPhoneNumber(dto.phoneNumber());
-        user.setRole(dto.role());
+        user.setRole(ROLE.CASHIER);
         user.setActive(true);
         user.setCreatedAt(LocalDate.now());
 

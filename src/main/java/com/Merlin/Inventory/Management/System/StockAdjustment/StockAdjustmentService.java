@@ -1,5 +1,6 @@
 package com.Merlin.Inventory.Management.System.StockAdjustment;
 
+import com.Merlin.Inventory.Management.System.Exception.InvalidProductOperationException;
 import com.Merlin.Inventory.Management.System.Exception.ResourceNotFoundException;
 import com.Merlin.Inventory.Management.System.Notification.NotificationService;
 import com.Merlin.Inventory.Management.System.Notification.NotificationType;
@@ -29,6 +30,10 @@ public class StockAdjustmentService {
 
         Product product = productRepository.findById(dto.productId())
                 .orElseThrow(()-> new ResourceNotFoundException("Product not found"));
+
+        if(product.isCountable() && dto.quantity() != Math.floor(dto.quantity())){
+            throw new InvalidProductOperationException(product.getProductName() + " must be inputted as a whole numbers");
+        }
 
         stockAdjustment.setProduct(product);
 

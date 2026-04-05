@@ -1,6 +1,7 @@
 package com.Merlin.Inventory.Management.System.User;
 
 import com.Merlin.Inventory.Management.System.Email.EmailService;
+import com.Merlin.Inventory.Management.System.Exception.BusinessRuleException;
 import com.Merlin.Inventory.Management.System.Exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,7 +28,7 @@ public class UserService {
         int numberOfAdmin = userRepository.countByRole(ROLE.ADMIN);
 
         if(numberOfAdmin >= 1 && user.getRole().equals(ROLE.ADMIN)){
-            throw new RuntimeException("Their can only be one Admin");
+            throw new BusinessRuleException("Their can only be one Admin");
         }
 
         var savedUser = userRepository.save(user);
@@ -78,7 +79,7 @@ public class UserService {
         if(!user.isActive()){
             user.setActive(true);
         }else {
-            throw new RuntimeException("User is already active");
+            throw new BusinessRuleException("User is already active");
         }
         userRepository.save(user);
     }
@@ -88,7 +89,7 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if(!user.isActive()){
-            throw new RuntimeException("User is already inactive");
+            throw new BusinessRuleException("User is already inactive");
         }
         user.setActive(false);
         userRepository.save(user);
@@ -97,11 +98,11 @@ public class UserService {
     public void changePassword(User authenticatedUser, ChangePasswordDto dto){
 
         if(passwordEncoder.matches(dto.oldPassword(),  authenticatedUser.getPassword())){
-            throw new RuntimeException("Old password does not match");
+            throw new BusinessRuleException("Old password does not match");
         }
 
         if(!dto.newPassword().equals(dto.confirmNewPassword())){
-            throw new RuntimeException("new password does not match ");
+            throw new BusinessRuleException("new password does not match ");
         }
 
         String newPassword = passwordEncoder.encode(dto.confirmNewPassword());

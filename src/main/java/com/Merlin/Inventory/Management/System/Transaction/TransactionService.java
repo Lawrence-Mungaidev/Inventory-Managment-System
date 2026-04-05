@@ -1,5 +1,7 @@
 package com.Merlin.Inventory.Management.System.Transaction;
 
+import com.Merlin.Inventory.Management.System.Exception.InvalidProductOperationException;
+import com.Merlin.Inventory.Management.System.Exception.PaymentException;
 import com.Merlin.Inventory.Management.System.Exception.ResourceNotFoundException;
 import com.Merlin.Inventory.Management.System.Mpesa.MpesaService;
 import com.Merlin.Inventory.Management.System.Notification.NotificationService;
@@ -34,12 +36,14 @@ public class TransactionService {
 
     public TransactionResponseDto create(TransactionDTO dto, User authenticatedUser) {
         Transaction transaction = transactionMapper.toTransaction(dto);
+        
 
         Transaction savedTransaction;
 
         TransactionItemResult result = buildTransactionItem(dto.items());
         List<TransactionItem> transactionItems = result.transactionItemList();
         BigDecimal totalAmount = result.totalAmount();
+
 
         transaction.setTotalAmount(totalAmount);
         transaction.setCreatedBy(authenticatedUser);
@@ -70,7 +74,7 @@ public class TransactionService {
                     savedTransaction.setTransactionItems(transactionItems);
                     transactionRepository.save(savedTransaction);
                 }else{
-                    throw new RuntimeException("STK push failed Please try again");
+                    throw new PaymentException("STK push failed Please try again");
                 }
 
 
@@ -90,15 +94,15 @@ public class TransactionService {
                     .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
             if(!product.isActive()){
-                throw new RuntimeException(product.getProductName() + " is no longer available");
+                throw new InvalidProductOperationException(product.getProductName() + " is no longer available");
             }
 
             if(product.isCountable() && itemRequest.quantity() != Math.floor(itemRequest.quantity())){
-                throw new RuntimeException(product.getProductName() + " must be sold in whole numbers");
+                throw new InvalidProductOperationException(product.getProductName() + " must be sold in whole numbers");
             }
 
             if (product.getCurrentStock() < itemRequest.quantity()){
-                throw new RuntimeException(product.getProductName() + " not enough stock");
+                throw new InvalidProductOperationException(product.getProductName() + " not enough stock");
             }
 
             TransactionItem transactionItem = new TransactionItem(product, itemRequest.quantity());
