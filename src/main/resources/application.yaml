@@ -28,8 +28,8 @@ spring:
           starttls:
             enable: true
 jwt:
-  secret: dGVzdHNlY3JldGtleWZvcnRlc3Rpbmd0ZXN0c2VjcmV0a2V5Zm9ydGVzdGluZw==
-  expiration: 86400000
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
 mpesa:
     consumer-key: ${MPESA_CONSUMER_KEY}
     consumer-secret: ${MPESA_CONSUMER_SECRET}
