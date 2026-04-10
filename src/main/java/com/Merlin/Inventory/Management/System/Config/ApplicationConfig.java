@@ -2,6 +2,7 @@ package com.Merlin.Inventory.Management.System.Config;
 
 import com.Merlin.Inventory.Management.System.Exception.ResourceNotFoundException;
 import com.Merlin.Inventory.Management.System.User.UserRepository;
+import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -55,6 +56,7 @@ public class ApplicationConfig {
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
+                .addServersItem(new Server().url("https://inventory-managment-system-production.up.railway.app"))
                 .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
                 .components(new Components()
                         .addSecuritySchemes("Bearer Authentication", new SecurityScheme()
