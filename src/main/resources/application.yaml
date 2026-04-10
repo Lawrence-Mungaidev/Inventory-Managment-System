@@ -27,9 +27,6 @@ spring:
           auth: true
           starttls:
             enable: true
-jwt:
-    secret: ${JWT_SECRET}
-    expiration: 86400000
 mpesa:
     consumer-key: ${MPESA_CONSUMER_KEY}
     consumer-secret: ${MPESA_CONSUMER_SECRET}
