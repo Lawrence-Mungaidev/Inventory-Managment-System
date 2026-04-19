@@ -3,7 +3,7 @@ A backend Rest API system built on Spring Boot to help small retail owners to ma
 Live Demo
 Swagger UI: https://inventory-managment-system-production.up.railway.app/swagger-ui/index.html
 
-![Swagger UI](images/swaggerUi.png)
+![Swagger UI](Images/swaggerUi.png)
 
 ROLES
 ADMIN
