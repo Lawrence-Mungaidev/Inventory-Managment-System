@@ -1,4 +1,4 @@
-INVENTORY MANAGEMENT SYSTEM
+#INVENTORY MANAGEMENT SYSTEM
 A backend Rest API system built on Spring Boot to help small retail owners to manage products and track stock in real time. The System has two roles, ADMIN and CASHIER, which their roles are clearly defined and has automated notifications.
 Live Demo
 Swagger UI: https://inventory-managment-system-production.up.railway.app/swagger-ui/index.html
