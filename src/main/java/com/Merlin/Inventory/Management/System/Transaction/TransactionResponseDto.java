@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public record TransactionResponseDto(
+        Long Id,
         Long transactionId,
         String cashierName,
         List<TransactionResponse> items,

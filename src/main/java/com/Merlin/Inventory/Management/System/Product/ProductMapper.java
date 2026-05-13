@@ -19,7 +19,7 @@ public class ProductMapper {
         return product;
     }
 
-    public ProductDto toProductDto(Product product) {
-        return new ProductDto(product.getProductName(), product.getDescription(), product.getSellingPrice(), product.getMinimumQuantity(), product.getSupplier().getId(), product.getCategory().getId());
+    public ProductResponseDto toProductResponseDto(Product product) {
+        return new ProductResponseDto(product.getId(), product.getProductName(), product.getDescription(), product.getSellingPrice(), product.getMinimumQuantity(), product.getSupplier().getId(), product.getCategory().getId());
     }
 }

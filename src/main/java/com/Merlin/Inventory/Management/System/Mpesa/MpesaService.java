@@ -109,11 +109,8 @@ public class MpesaService {
         String checkoutRequestId = (String) stkCallback.get("CheckoutRequestID");
         int resultCode = (int) stkCallback.get("ResultCode");
 
-
-
         Transaction transaction = transactionRepository.findByMpesaReference(checkoutRequestId)
                 .orElseThrow(()-> new ResourceNotFoundException("Checkout request wasn't found. Please try again"));
-
 
         if(resultCode != 0){
             transaction.setStatus(Status.CANCELLED);

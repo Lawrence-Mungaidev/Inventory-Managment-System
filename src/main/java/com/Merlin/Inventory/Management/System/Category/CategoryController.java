@@ -17,19 +17,19 @@ public class CategoryController {
 
     @PostMapping("/category/create")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CategoryDto> createCategory(@Valid @RequestBody CategoryDto dto) {
+    public ResponseEntity<CategoryResponseDto> createCategory(@Valid @RequestBody CategoryDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(dto));
     }
 
     @PatchMapping("/category/update/{categoryId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CategoryDto> updateCategory(@Valid @RequestBody CategoryDto dto, @PathVariable("categoryId") Long categoryId) {
+    public ResponseEntity<CategoryResponseDto> updateCategory(@Valid @RequestBody CategoryDto dto, @PathVariable("categoryId") Long categoryId) {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.updateCategory(categoryId,dto));
     }
 
     @GetMapping("/categories")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<CategoryDto>> getAllCategories() {
+    public ResponseEntity<List<CategoryResponseDto>> getAllCategories() {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.getAllCategories());
     }
 
@@ -42,7 +42,7 @@ public class CategoryController {
 
     @GetMapping("/category/")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CategoryDto> getCategory(@RequestParam("categoryId") Long categoryId) {
+    public ResponseEntity<CategoryResponseDto> getCategory(@RequestParam("categoryId") Long categoryId) {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategoryById(categoryId));
     }
 }

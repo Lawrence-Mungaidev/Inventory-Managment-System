@@ -18,31 +18,31 @@ public class ProductController {
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ProductDto> createProduct(@Valid @RequestBody ProductDto productDto) {
+    public ResponseEntity<ProductResponseDto> createProduct(@Valid @RequestBody ProductDto productDto) {
        return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(productDto));
     }
 
     @PatchMapping("/update/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ProductDto> updateProduct(@Valid @RequestBody ProductDto productDto, @PathVariable("userId") Long productId) {
+    public ResponseEntity<ProductResponseDto> updateProduct(@Valid @RequestBody ProductDto productDto, @PathVariable("userId") Long productId) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.update(productId, productDto));
     }
 
     @GetMapping("/active")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<ProductDto>> getAllActiveProducts() {
+    public ResponseEntity<List<ProductResponseDto>> getAllActiveProducts() {
         return ResponseEntity.status(HttpStatus.OK).body(productService.findAllActiveProducts());
     }
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<ProductDto>> getAllProducts() {
+    public ResponseEntity<List<ProductResponseDto>> getAllProducts() {
         return ResponseEntity.status(HttpStatus.OK).body(productService.findAll());
     }
 
     @GetMapping("/deactivated")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<ProductDto>> getAllDeactivatedProducts() {
+    public ResponseEntity<List<ProductResponseDto>> getAllDeactivatedProducts() {
         return ResponseEntity.status(HttpStatus.OK).body(productService.getDeactivatedProducts());
     }
 

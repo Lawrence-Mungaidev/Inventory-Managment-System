@@ -21,7 +21,7 @@ public class ProductService {
     private final SupplierRepository supplierRepository;
     private final CategoryRepository categoryRepository;
 
-    public ProductDto create(ProductDto dto) {
+    public ProductResponseDto create(ProductDto dto) {
         Product product = productMapper.toProduct(dto);
 
         Supplier supplier = supplierRepository.findById(dto.supplierId())
@@ -35,10 +35,10 @@ public class ProductService {
 
         var savedProduct = productRepository.save(product);
 
-        return productMapper.toProductDto(savedProduct);
+        return productMapper.toProductResponseDto(savedProduct);
     }
 
-    public ProductDto update(Long productId,ProductDto dto) {
+    public ProductResponseDto update(Long productId,ProductDto dto) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(()-> new ResourceNotFoundException("Product Not Found"));
 
@@ -71,13 +71,13 @@ public class ProductService {
 
         var savedProduct = productRepository.save(product);
 
-        return productMapper.toProductDto(savedProduct);
+        return productMapper.toProductResponseDto(savedProduct);
     }
 
-    public List<ProductDto> findAllActiveProducts(){
+    public List<ProductResponseDto> findAllActiveProducts(){
         return productRepository.findByIsActiveTrue(Sort.by("productName").ascending())
                 .stream()
-                .map(productMapper :: toProductDto)
+                .map(productMapper :: toProductResponseDto)
                 .toList();
     }
 
@@ -111,18 +111,18 @@ public class ProductService {
         productRepository.save(product);
     }
 
-    public List<ProductDto> findAll(){
+    public List<ProductResponseDto> findAll(){
         return productRepository.findAll(Sort.by("productName").ascending())
                 .stream()
-                .map(productMapper :: toProductDto)
+                .map(productMapper :: toProductResponseDto)
                 .toList();
 
     }
 
-    public List<ProductDto> getDeactivatedProducts(){
+    public List<ProductResponseDto> getDeactivatedProducts(){
         return productRepository.findByIsActiveFalse()
                 .stream()
-                .map(productMapper :: toProductDto)
+                .map(productMapper :: toProductResponseDto)
                 .toList();
     }
 

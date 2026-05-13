@@ -27,7 +27,7 @@ public class TransactionMapper {
     }
 
     public TransactionResponse toTransactionResponse(TransactionItem transactionItem){
-        return new TransactionResponse(transactionItem.getProduct().getProductName(), transactionItem.getQuantity(), transactionItem.getPrice(), transactionItem.getSubtotal());
+        return new TransactionResponse(transactionItem.getId(), transactionItem.getProduct().getProductName(), transactionItem.getQuantity(), transactionItem.getPrice(), transactionItem.getSubtotal());
     }
 
     public TransactionResponseDto toTransactionResponseDto(Transaction transaction){
@@ -38,6 +38,6 @@ public class TransactionMapper {
                 .map(this :: toTransactionResponse)
                 .toList();
 
-        return new TransactionResponseDto(transaction.getId(), usersName, transactionResponses, transaction.getTotalAmount(), transaction.getPaymentMethod());
+        return new TransactionResponseDto(transaction.getId(), transaction.getId(), usersName, transactionResponses, transaction.getTotalAmount(), transaction.getPaymentMethod());
     }
 }

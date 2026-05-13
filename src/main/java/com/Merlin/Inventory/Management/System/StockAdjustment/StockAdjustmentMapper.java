@@ -15,6 +15,6 @@ public class StockAdjustmentMapper {
     }
 
     public StockAdjustmentResponse toStockAdjustmentResponse(StockAdjustment  stockAdjustment) {
-        return new StockAdjustmentResponse(stockAdjustment.getProduct().getProductName() , stockAdjustment.getQuantity(), stockAdjustment.getAdjustmentType(), stockAdjustment.getReason());
+        return new StockAdjustmentResponse(stockAdjustment.getId(), stockAdjustment.getProduct().getProductName() , stockAdjustment.getQuantity(), stockAdjustment.getAdjustmentType(), stockAdjustment.getReason());
     }
 }

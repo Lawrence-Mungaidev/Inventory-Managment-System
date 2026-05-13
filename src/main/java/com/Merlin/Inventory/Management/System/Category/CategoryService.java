@@ -14,28 +14,28 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
 
-    public CategoryDto createCategory(CategoryDto dto){
+    public CategoryResponseDto createCategory(CategoryDto dto){
         Category category =categoryMapper.toCategory(dto);
 
         var savedCategory = categoryRepository.save(category);
 
-        return categoryMapper.toCategoryDto(savedCategory);
+        return categoryMapper.toCategoryResponseDto(savedCategory);
     }
 
-    public CategoryDto updateCategory(Long categoryId, CategoryDto dto){
+    public CategoryResponseDto updateCategory(Long categoryId, CategoryDto dto){
 
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() ->new ResourceNotFoundException("Category was not found"));
 
         category.setCategoryName(dto.categoryName());
         categoryRepository.save(category);
-        return categoryMapper.toCategoryDto(category);
+        return categoryMapper.toCategoryResponseDto(category);
     }
 
-    public List<CategoryDto> getAllCategories(){
+    public List<CategoryResponseDto> getAllCategories(){
         return categoryRepository.findAll()
                 .stream()
-                .map(categoryMapper ::toCategoryDto)
+                .map(categoryMapper ::toCategoryResponseDto)
                 .toList();
     }
 
@@ -50,10 +50,10 @@ public class CategoryService {
         }
     }
 
-    public CategoryDto getCategoryById(Long categoryId){
+    public CategoryResponseDto getCategoryById(Long categoryId){
         var category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("The category wasn't found"));
-        return categoryMapper.toCategoryDto(category);
+        return categoryMapper.toCategoryResponseDto(category);
     }
 
 }

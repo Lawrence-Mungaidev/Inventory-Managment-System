@@ -17,7 +17,7 @@ public class SupplierMapper {
     }
 
     public SupplierResponseDto toSupplierResponseDto(Supplier supplier) {
-        return new SupplierResponseDto(supplier.getSupplierName(),supplier.getContactName(), supplier.getContactNumber(), supplier.getAddress(), supplier.isActive());
+        return new SupplierResponseDto(supplier.getId(), supplier.getSupplierName(),supplier.getContactName(), supplier.getContactNumber(), supplier.getAddress(), supplier.isActive());
     }
 
 }
