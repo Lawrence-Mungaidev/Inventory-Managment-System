@@ -16,13 +16,13 @@ public class NotificationService {
     private final NotificationMapper notificationMapper;
     private final UserRepository userRepository;
 
-    public NotificationResponseDto createNotification(User receiver,String message,NotificationType notificationType){
+    public void createNotification(User receiver, String message, NotificationType notificationType){
         Notification notification = new Notification(receiver,message,notificationType);
 
         notification.setReceiver(receiver);
         var savedNotification = notificationRepository.save(notification);
 
-        return notificationMapper.toNotificationResponseDto(savedNotification);
+        notificationMapper.toNotificationResponseDto(savedNotification);
     }
 
     public void markNotificationAsRead(Long notificationId){

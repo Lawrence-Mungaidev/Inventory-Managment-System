@@ -1,6 +1,6 @@
 package com.Merlin.Inventory.Management.System.Email;
 
-import com.Merlin.Inventory.Management.System.Notification.NotificationDto;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
