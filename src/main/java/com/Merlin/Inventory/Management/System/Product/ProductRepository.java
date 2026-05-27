@@ -10,4 +10,5 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
 
     List<Product> findByIsActiveTrue(Sort sort);
     List<Product> findByIsActiveFalse();
+    List<Product> findByProductNameContaining(String productName);
 }

@@ -10,24 +10,25 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/categories")
 @RequiredArgsConstructor
 public class CategoryController {
 
     private final CategoryService categoryService;
 
-    @PostMapping("/category/create")
+    @PostMapping("/create")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryResponseDto> createCategory(@Valid @RequestBody CategoryDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(dto));
     }
 
-    @PatchMapping("/category/update/{categoryId}")
+    @PatchMapping("/update/{categoryId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryResponseDto> updateCategory(@Valid @RequestBody CategoryDto dto, @PathVariable("categoryId") Long categoryId) {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.updateCategory(categoryId,dto));
     }
 
-    @GetMapping("/categories")
+    @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<CategoryResponseDto>> getAllCategories() {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.getAllCategories());

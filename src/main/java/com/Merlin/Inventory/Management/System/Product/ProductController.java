@@ -66,4 +66,9 @@ public class ProductController {
         productService.delete(productId);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/ByProductsName")
+    public ResponseEntity<List<ProductResponseDto>> getAllProductsByProductName(@RequestParam("productName") String productName) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductByName(productName));
+    }
 }

@@ -126,4 +126,11 @@ public class ProductService {
                 .toList();
     }
 
+    public List<ProductResponseDto> getProductByName(String productName){
+        return productRepository.findByProductNameContaining(productName)
+                .stream()
+                .map(productMapper :: toProductResponseDto)
+                .toList();
+    }
+
 }

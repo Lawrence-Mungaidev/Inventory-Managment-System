@@ -65,10 +65,25 @@ public class UserService {
         return userMapper.toUserResponseDto(userRepository.save(user));
     }
 
-    public List<UserResponseDto> findUserByName(String firstName, String lastName){
-        return userRepository.findByFirstNameContainingOrLastNameContaining(firstName, lastName)
+    public List<UserResponseDto> findUserByName(String fullName) {
+        if (fullName == null || fullName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
+
+        String[] parts = fullName.trim().split("\\s+", 2);
+        String firstName = parts[0];
+        String lastName = parts.length > 1 ? parts[1] : "";
+
+        if (firstName.length() < 2) {
+            throw new IllegalArgumentException("Name too short");
+        }
+
+        return userRepository
+                .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
+                        firstName, lastName.isEmpty() ? firstName : lastName
+                )
                 .stream()
-                .map(userMapper :: toUserResponseDto)
+                .map(userMapper:: toUserResponseDto)
                 .toList();
     }
 

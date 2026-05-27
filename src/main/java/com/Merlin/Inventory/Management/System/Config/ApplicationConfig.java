@@ -56,7 +56,7 @@ public class ApplicationConfig {
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
-                .addServersItem(new Server().url("https://inventory-managment-system-production.up.railway.app"))
+                .addServersItem(new Server().url("http://localhost:8080/swagger-ui/index.html"))
                 .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
                 .components(new Components()
                         .addSecuritySchemes("Bearer Authentication", new SecurityScheme()

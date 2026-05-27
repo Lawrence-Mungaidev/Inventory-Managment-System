@@ -13,7 +13,6 @@ public record SupplierDto(
         @NotBlank(message = "Contact person number is required")
         @Pattern(regexp = "^(07|01)\\d{8}$", message = "Invalid number format")
         String contactNumber,
-
         String address
 ) {
 }
