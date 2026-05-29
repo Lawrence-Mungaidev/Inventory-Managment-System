@@ -7,7 +7,7 @@ public record StockResponseDto(
         Long Id,
         Long productId,
         Double arrivedQuantity,
-        BigDecimal boughtPrice,
+        BigDecimal totalBoughtPrice,
         String supplierName,
         String addedByName,
         String approvedByName,

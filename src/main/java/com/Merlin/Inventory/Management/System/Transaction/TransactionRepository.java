@@ -12,14 +12,18 @@ import java.util.Optional;
 
 public interface TransactionRepository extends JpaRepository<Transaction,Long> {
 
-    List<Transaction> findByTransactionDateBetween(LocalDateTime start, LocalDateTime end);
+
 
     @Query("SELECT SUM(t.totalAmount) FROM Transaction t WHERE t.transactionDate BETWEEN :start AND :end AND t.status = 'COMPLETED'")
-    BigDecimal getTotalSalesByDateBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+    BigDecimal getTotalSalesByDateBetween(@Param("start") LocalDate start, @Param("end") LocalDate end);
 
-    int countByTransactionDateBetweenAndStatus(LocalDateTime start, LocalDateTime end, Status status);
+    int countByTransactionDateBetweenAndStatus(LocalDate start, LocalDate end, Status status);
 
     Optional<Transaction> findByMpesaReference(String mpesaReference);
     List<Transaction> findByStatus(Status status);
+
+    List<Transaction> findAllByOrderByTransactionDateDesc();
+    List<Transaction> findByTransactionDateBetweenOrderByTransactionDateDesc(LocalDate start, LocalDate end);
+
 }
 

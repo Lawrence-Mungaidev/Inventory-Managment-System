@@ -2,10 +2,12 @@ package com.Merlin.Inventory.Management.System.Stock;
 
 import com.Merlin.Inventory.Management.System.Product.Product;
 import com.Merlin.Inventory.Management.System.Supplier.Supplier;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public record StockDto(
         @NotNull(message = "Please select a product")
@@ -17,6 +19,8 @@ public record StockDto(
         @Positive(message = "Please enter a valid buying price")
         BigDecimal buyingPrice,
         @NotNull(message = "please select the supplier")
-        Long supplierId
+        Long supplierId,
+        @FutureOrPresent(message = "Expiry date cannot be in the past")
+        LocalDate expiryDate
 ) {
 }

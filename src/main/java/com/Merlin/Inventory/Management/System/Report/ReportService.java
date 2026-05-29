@@ -27,11 +27,11 @@ public class ReportService {
     private final StockAdjustmentRepository adjustmentRepository;
 
     public DailyReportDto getDailyReport() {
-        LocalDateTime start = LocalDate.now().atStartOfDay();
-        LocalDateTime end = LocalDate.now().atTime(23,59,59);
+        LocalDate start = LocalDate.from(LocalDate.now().atStartOfDay());
+        LocalDate end = LocalDate.now();
         LocalDate today = LocalDate.now();
 
-        List<Transaction> transactionList = transactionRepository.findByTransactionDateBetween(start, end);
+        List<Transaction> transactionList = transactionRepository.findByTransactionDateBetweenOrderByTransactionDateDesc(start, end);
 
         BigDecimal totalSales = transactionRepository.getTotalSalesByDateBetween(start, end);
 
@@ -47,7 +47,7 @@ public class ReportService {
         LocalDateTime startOfMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
         LocalDateTime endOfMonth = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).atTime(23,59,59);
 
-        List<Transaction> transactionList = transactionRepository.findByTransactionDateBetween(startOfMonth, endOfMonth);
+        List<Transaction> transactionList = transactionRepository.findByTransactionDateBetweenOrderByTransactionDateDesc(startOfMonth, endOfMonth);
 
         BigDecimal totalSales = transactionRepository.getTotalSalesByDateBetween(startOfMonth, endOfMonth);
         if(totalSales == null) totalSales = BigDecimal.ZERO;
@@ -55,7 +55,7 @@ public class ReportService {
         List<ItemsSold> soldItems = buildMostSoldItems(transactionList);
 
         LocalDate start = LocalDate.now().withDayOfMonth(1);
-        LocalDate end = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
+        LocalDate end = LocalDate.now();
 
         BigDecimal totalStockSales = stockRepository.getTotalSalesByApprovalDateBetween(start,end);
 
@@ -115,7 +115,7 @@ public class ReportService {
     }
 
     public DateRangeReportDto getDateRangeReportDto(LocalDate start, LocalDate end){
-        List<Transaction> transactionList = transactionRepository.findByTransactionDateBetween(start.atStartOfDay(), end.atTime(23,59,59));
+        List<Transaction> transactionList = transactionRepository.findByTransactionDateBetweenOrderByTransactionDateDesc(start.atStartOfDay(), end.atTime(23,59,59));
 
         BigDecimal totalSales = transactionRepository.getTotalSalesByDateBetween(start.atStartOfDay(), end.atTime(23,59,59));
         if(totalSales == null) totalSales = BigDecimal.ZERO;

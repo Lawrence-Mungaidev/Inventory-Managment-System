@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 
@@ -40,7 +41,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleBusinessRuleException(BusinessRuleException ex){
         var errors = new HashMap<String, String>();
         errors.put("message", ex.getMessage());
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errors, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(InvalidProductOperationException.class)
@@ -55,5 +56,12 @@ public class GlobalExceptionHandler {
         var errors = new HashMap<String, String>();
         errors.put("message", ex.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<?> handleResponseStatusException(ResponseStatusException ex) {
+        var errors = new HashMap<String, String>();
+        errors.put("message", ex.getReason());
+        return new ResponseEntity<>(errors, ex.getStatusCode());
     }
 }

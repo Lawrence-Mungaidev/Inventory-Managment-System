@@ -4,10 +4,15 @@ import com.Merlin.Inventory.Management.System.Email.EmailService;
 import com.Merlin.Inventory.Management.System.Exception.BusinessRuleException;
 import com.Merlin.Inventory.Management.System.Exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -24,13 +29,6 @@ public class UserService {
         var password = passwordEncoder.encode(dto.password());
 
         user.setPassword(password);
-
-        int numberOfAdmin = userRepository.countByRole(ROLE.ADMIN);
-
-        if(numberOfAdmin >= 1 && user.getRole().equals(ROLE.ADMIN)){
-            throw new BusinessRuleException("Their can only be one Admin");
-        }
-
         var savedUser = userRepository.save(user);
 
         return userMapper.toUserResponseDto(savedUser);
@@ -44,7 +42,7 @@ public class UserService {
                 .toList();
     }
 
-    public UserResponseDto updateUser(User authenticatedUser, UserDto dto){
+    public UserResponseDto updateUser(User authenticatedUser, UserUpdateDto dto){
         Long userId = authenticatedUser.getUserId();
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -54,9 +52,6 @@ public class UserService {
         }
         if(dto.lastName() != null){
             user.setLastName(dto.lastName());
-        }
-        if(dto.email() != null){
-            user.setEmail(dto.email());
         }
         if(dto.phoneNumber() != null){
             user.setPhoneNumber(dto.phoneNumber());
@@ -94,7 +89,7 @@ public class UserService {
         if(!user.isActive()){
             user.setActive(true);
         }else {
-            throw new BusinessRuleException("User is already active");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already active");
         }
         userRepository.save(user);
     }
@@ -104,7 +99,7 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if(!user.isActive()){
-            throw new BusinessRuleException("User is already inactive");
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"User is already inactive");
         }
         user.setActive(false);
         userRepository.save(user);
@@ -112,23 +107,24 @@ public class UserService {
 
     public void changePassword(User authenticatedUser, ChangePasswordDto dto){
 
-        if(passwordEncoder.matches(dto.oldPassword(),  authenticatedUser.getPassword())){
-            throw new BusinessRuleException("Old password does not match");
+        if(!passwordEncoder.matches(dto.oldPassword(),  authenticatedUser.getPassword())){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Old password does not match");
         }
 
         if(!dto.newPassword().equals(dto.confirmNewPassword())){
-            throw new BusinessRuleException("new password does not match ");
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"new password does not match ");
         }
 
         String newPassword = passwordEncoder.encode(dto.confirmNewPassword());
         authenticatedUser.setPassword(newPassword);
+        authenticatedUser.setMustChangePassword(false);
 
         userRepository.save(authenticatedUser);
     }
 
-    public ForgortResponse forgotPassword(String userEmail){
+    public ForgortResponse forgotPassword(ForgortPasswordDto dto ){
 
-        User user = userRepository.findByEmail(userEmail)
+        User user = userRepository.findByEmail(dto.email())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         String tempPassword = generateTempPassword();
@@ -136,25 +132,44 @@ public class UserService {
         String password = passwordEncoder.encode(tempPassword);
 
         user.setPassword(password);
-        userRepository.save(user);
 
-      emailService.sendEmail(userEmail,"FORGOT PASSWORD", tempPassword);
+      emailService.sendEmail(dto.email(), "FORGOT PASSWORD", tempPassword);
       user.setMustChangePassword(true);
 
-      String message ="A temporary password has been sent to" + user.getEmail();
+      String message ="A temporary password has been sent to " + user.getEmail();
+      userRepository.save(user);
 
       return new ForgortResponse(message);
     }
 
-    public String generateTempPassword(){
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    private String generateTempPassword() {
         SecureRandom random = new SecureRandom();
-        StringBuilder tempPassword = new StringBuilder();
 
-        for (int i = 0; i < 8; i++) {
-            tempPassword.append(characters.charAt(random.nextInt(characters.length())));
+        String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String lower = "abcdefghijklmnopqrstuvwxyz";
+        String digits = "0123456789";
+        String special = "@#$!";
+        String all = upper + lower + digits + special;
+
+        List<Character> passwordChars = new ArrayList<>();
+
+        passwordChars.add(upper.charAt(random.nextInt(upper.length())));
+        passwordChars.add(upper.charAt(random.nextInt(upper.length())));
+        passwordChars.add(lower.charAt(random.nextInt(lower.length())));
+        passwordChars.add(lower.charAt(random.nextInt(lower.length())));
+        passwordChars.add(digits.charAt(random.nextInt(digits.length())));
+        passwordChars.add(digits.charAt(random.nextInt(digits.length())));
+        passwordChars.add(special.charAt(random.nextInt(special.length())));
+        passwordChars.add(special.charAt(random.nextInt(special.length())));
+
+
+        Collections.shuffle(passwordChars, random);
+
+        StringBuilder sb = new StringBuilder();
+        for (char c : passwordChars) {
+            sb.append(c);
         }
 
-        return tempPassword.toString();
+        return sb.toString();
     }
 }

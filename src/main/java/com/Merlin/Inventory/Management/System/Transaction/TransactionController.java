@@ -24,7 +24,7 @@ public class TransactionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.create(dto, authenticatedUser));
     }
 
-    @GetMapping
+     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<TransactionResponseDto>> getAllTransactions(){
         return ResponseEntity.status(HttpStatus.OK).body(transactionService.getAllTransactions());
@@ -44,7 +44,10 @@ public class TransactionController {
 
     @GetMapping("/range")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<TransactionResponseDto>> getAllTransactionsRange(@Valid @RequestBody LocalDateTime start, @Valid @RequestBody LocalDateTime end){
-        return ResponseEntity.status(HttpStatus.OK).body(transactionService.getTransactionByDateRange(start, end));
+    public ResponseEntity<List<TransactionResponseDto>> getAllTransactionsRange(
+            @RequestParam LocalDateTime start,
+            @RequestParam LocalDateTime end) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(transactionService.getTransactionByDateRange(start, end));
     }
 }

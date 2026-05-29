@@ -112,7 +112,7 @@ public class MpesaService {
         Transaction transaction = transactionRepository.findByMpesaReference(checkoutRequestId)
                 .orElseThrow(()-> new ResourceNotFoundException("Checkout request wasn't found. Please try again"));
 
-        if(resultCode != 0){
+       /* if(resultCode != 0){
             transaction.setStatus(Status.CANCELLED);
             transactionRepository.save(transaction);
             String message = "Transaction Failed for " + transaction.getPhoneNumber() + " request the customer to try again";
@@ -133,7 +133,7 @@ public class MpesaService {
             productRepository.save(product);
         }
 
-        transactionRepository.save(transaction);
+        transactionRepository.save(transaction);*/
 
     }
 

@@ -41,9 +41,9 @@ public class CategoryController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/category/")
+    @GetMapping("/category/{categoryId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CategoryResponseDto> getCategory(@RequestParam("categoryId") Long categoryId) {
+    public ResponseEntity<CategoryResponseDto> getCategory(@PathVariable("categoryId") Long categoryId) {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategoryById(categoryId));
     }
 }

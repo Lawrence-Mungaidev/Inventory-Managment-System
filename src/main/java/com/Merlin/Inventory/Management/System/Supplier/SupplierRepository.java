@@ -8,4 +8,5 @@ import java.util.List;
 public interface SupplierRepository extends JpaRepository<Supplier, Long> {
 
     List<Supplier> findByIsActiveTrue(Sort sort);
+    boolean existsByContactNumberAndIdNot(String contactNumber, Long id);
 }

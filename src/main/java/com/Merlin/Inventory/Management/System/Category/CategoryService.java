@@ -3,7 +3,9 @@ package com.Merlin.Inventory.Management.System.Category;
 import com.Merlin.Inventory.Management.System.Exception.BusinessRuleException;
 import com.Merlin.Inventory.Management.System.Exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -15,6 +17,11 @@ public class CategoryService {
     private final CategoryMapper categoryMapper;
 
     public CategoryResponseDto createCategory(CategoryDto dto){
+
+        if (categoryRepository.existsByCategoryName(dto.categoryName())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Category already exists");
+        }
+
         Category category =categoryMapper.toCategory(dto);
 
         var savedCategory = categoryRepository.save(category);

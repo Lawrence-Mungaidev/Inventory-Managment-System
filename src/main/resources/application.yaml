@@ -29,7 +29,7 @@ spring:
             enable: true
 jwt:
   secret: qssL31Qgw5DUn/XySPLlMzH2Itidp3ItCOCfdz5gaCWxBw1EdhUFK7fREYyl+kuIpAzQ+3dwnPHHw/qgkWXy0w==
-  expiration: 840000
+  expiration: 61200000
 mpesa:
     consumer-key: CGIlnd5x5uN7QryC91gutqawFojWNqo8fduTVonA3uz9L05O
     consumer-secret: wYk2AApynB1UMBOVzGL4zY3nVaWkI36uftEO3BpksihUtAK00DbojmA7cUGBrA84

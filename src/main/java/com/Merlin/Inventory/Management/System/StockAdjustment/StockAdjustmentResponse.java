@@ -5,6 +5,7 @@ public record StockAdjustmentResponse(
         String productName,
         Double quantity,
         AdjustmentType adjustmentType,
-        String reason
+        String reason,
+        Status status
 ) {
 }

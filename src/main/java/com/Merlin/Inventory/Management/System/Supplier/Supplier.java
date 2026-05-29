@@ -2,11 +2,13 @@ package com.Merlin.Inventory.Management.System.Supplier;
 
 import com.Merlin.Inventory.Management.System.Product.Product;
 import com.Merlin.Inventory.Management.System.Stock.Stock;
+import com.Merlin.Inventory.Management.System.User.User;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -23,6 +25,8 @@ public class Supplier {
     private String contactNumber;
     private String address;
     private boolean isActive;
+    private LocalDateTime createdAt;
+
 
 
     @OneToMany(
@@ -45,5 +49,6 @@ public class Supplier {
         this.contactNumber = contactNumber;
         this.address = address;
         this.isActive = true;
+        this.createdAt = LocalDateTime.now();
     }
 }

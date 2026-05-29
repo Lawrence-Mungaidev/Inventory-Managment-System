@@ -1,5 +1,6 @@
 package com.Merlin.Inventory.Management.System.Transaction;
 
+import com.Merlin.Inventory.Management.System.Exception.BusinessRuleException;
 import com.Merlin.Inventory.Management.System.Exception.InvalidProductOperationException;
 import com.Merlin.Inventory.Management.System.Exception.PaymentException;
 import com.Merlin.Inventory.Management.System.Exception.ResourceNotFoundException;
@@ -36,7 +37,6 @@ public class TransactionService {
 
     public TransactionResponseDto create(TransactionDTO dto, User authenticatedUser) {
         Transaction transaction = transactionMapper.toTransaction(dto);
-        
 
         Transaction savedTransaction;
 
@@ -48,7 +48,16 @@ public class TransactionService {
         transaction.setTotalAmount(totalAmount);
         transaction.setCreatedBy(authenticatedUser);
 
+        BigDecimal balance;
+
         if (dto.paymentMethod().equals(PaymentMethod.CASH)) {
+
+            if(dto.amountGiven().compareTo(transaction.getTotalAmount()) < 0){
+                throw new PaymentException("Amount must be greater than or equal to transaction amount");
+            }
+
+             balance = dto.amountGiven().subtract(transaction.getTotalAmount());
+
             transaction.setStatus(Status.COMPLETED);
             deductStock(transactionItems);
 
@@ -59,13 +68,22 @@ public class TransactionService {
                 savedTransaction.setTransactionItems(transactionItems);
             });
         } else if (dto.paymentMethod().equals(PaymentMethod.MPESA)) {
-            transaction.setStatus(Status.PENDING);
+            transaction.setStatus(Status.COMPLETED);
+
+            balance = BigDecimal.ZERO;
+
+            deductStock(transactionItems);
 
             savedTransaction = transactionRepository.save(transaction);
             transactionItems.forEach(item -> {
                 item.setTransaction(savedTransaction);
                 transactionItemRepository.save(item);
             });
+
+            savedTransaction.setTransactionItems(transactionItems);
+
+            /*
+            The client at the moment didn't want mpesa STK PUSH, Customer is always right
 
             String checkoutRequestId = mpesaService.initialiseSTKPush(dto.phoneNumber(), transaction.getTotalAmount());
 
@@ -76,13 +94,16 @@ public class TransactionService {
                 }else{
                     throw new PaymentException("STK push failed Please try again");
                 }
-
+                */
 
         } else {
-            savedTransaction = null;
+            throw new BusinessRuleException("Invalid Payment Method");
         }
+        transaction.setReceiptNumber("RCP-" + transaction.getId());
 
-        return transactionMapper.toTransactionResponseDto(savedTransaction);
+        var finalSavedTransaction = transactionRepository.save(savedTransaction);
+
+        return transactionMapper.toTransactionResponseDto(finalSavedTransaction, balance);
     }
 
     private TransactionItemResult buildTransactionItem(List<TransactionItemRequest> transactionItemsRequest) {
@@ -123,17 +144,19 @@ public class TransactionService {
             String message = product.getProductName() + " is running Low\nRemining quantity: " + product.getCurrentStock();
 
             if(product.getCurrentStock() < product.getMinimumQuantity()){
-                User admin  = userRepository.findByRole(ROLE.ADMIN)
-                                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-                notificationService.createNotification(admin, message, NotificationType.LOW_STOCK);
+                List<User> admins  = userRepository.findByRole(ROLE.ADMIN);
+
+                for(User admin : admins){
+                    notificationService.createNotification(admin, message, NotificationType.LOW_STOCK);
+                }
             }
         }
     }
 
     public List<TransactionResponseDto> getAllTransactions() {
-        return transactionRepository.findAll()
+        return transactionRepository.findAllByOrderByTransactionDateDesc()
                 .stream()
-                .map(transactionMapper :: toTransactionResponseDto)
+                .map(transaction -> transactionMapper.toTransactionResponseDto(transaction, null))
                 .toList();
     }
 
@@ -141,24 +164,24 @@ public class TransactionService {
         Transaction transaction = transactionRepository.findById(transactionId)
                                 .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
 
-        return transactionMapper.toTransactionResponseDto(transaction);
+        return transactionMapper.toTransactionResponseDto(transaction, null);
     }
 
     public List<TransactionResponseDto> getTodayTransactions() {
 
-        LocalDateTime start = LocalDate.now().atStartOfDay();
-        LocalDateTime end = LocalDate.now().atTime(23,59,59);
+        LocalDate start = LocalDate.now();
+        LocalDate end = LocalDate.now();
 
-      return transactionRepository.findByTransactionDateBetween(start,end)
+      return transactionRepository.findByTransactionDateBetweenOrderByTransactionDateDesc(start,end)
               .stream()
-              .map(transactionMapper ::toTransactionResponseDto)
+              .map(transaction -> transactionMapper.toTransactionResponseDto(transaction, null))
               .toList();
     }
 
-    public List<TransactionResponseDto> getTransactionByDateRange(LocalDateTime start, LocalDateTime end) {
-        return transactionRepository.findByTransactionDateBetween(start,end)
+    public List<TransactionResponseDto> getTransactionByDateRange(LocalDate start, LocalDate end) {
+        return transactionRepository.findByTransactionDateBetweenOrderByTransactionDateDesc(start,end)
                 .stream()
-                .map(transactionMapper ::toTransactionResponseDto)
+                .map(transaction -> transactionMapper.toTransactionResponseDto(transaction, null))
                 .toList();
     }
 }

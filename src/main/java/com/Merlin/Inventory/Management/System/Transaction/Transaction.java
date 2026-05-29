@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +25,16 @@ public class Transaction {
     private BigDecimal totalAmount;
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
-    private String phoneNumber;
+    // private String phoneNumber;
     private String mpesaReference;
-    private LocalDateTime transactionDate;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+    private LocalDate transactionDate;
     @Enumerated(EnumType.STRING)
     private Status status;
+    @Column(nullable = false)
+    private String receiptNumber;
+
 
     @ManyToOne
     @JoinColumn(
@@ -48,6 +54,6 @@ public class Transaction {
 
     public Transaction(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
-        this.transactionDate = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
     }
 }

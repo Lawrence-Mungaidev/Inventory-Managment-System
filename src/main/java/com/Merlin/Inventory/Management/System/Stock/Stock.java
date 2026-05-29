@@ -27,7 +27,6 @@ public class Stock {
     @JsonBackReference
     private Product product;
     private double arrivedQuantity;
-    private BigDecimal buyingPrice;
     private BigDecimal totalAmount;
 
     @ManyToOne
@@ -56,15 +55,16 @@ public class Stock {
     @Enumerated(EnumType.STRING)
     private Status status;
     private LocalDate approvalDate;
+    private LocalDate expiryDate;
 
    protected Stock(){}
 
-    public Stock(Product product, double arrivedQuantity, BigDecimal buyingPrice, Supplier supplier) {
+    public Stock(Product product, double arrivedQuantity, Supplier supplier, LocalDate expiryDate) {
         this.product = product;
         this.arrivedQuantity = arrivedQuantity;
-        this.buyingPrice = buyingPrice;
         this.supplier = supplier;
         this.arrivalDate = LocalDate.now();
         this.status = Status.PENDING;
+        this.expiryDate = expiryDate;
     }
 }

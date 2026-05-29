@@ -24,7 +24,7 @@ public class SupplierController {
 
     @PatchMapping("/update/{supplierId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<SupplierResponseDto> update(@Valid @RequestBody SupplierDto dto, @PathVariable("supplierId")Long supplierId){
+    public ResponseEntity<SupplierResponseDto> update(@Valid @RequestBody SupplierUpdateDto dto, @PathVariable("supplierId")Long supplierId){
         return ResponseEntity.status(HttpStatus.OK).body(supplierService.updateSupplier(supplierId,dto));
     }
 
@@ -55,9 +55,9 @@ public class SupplierController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/")
+    @GetMapping("/{supplierId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<SupplierResponseDto> getSupplier(@RequestParam("supplierId")Long supplierId){
+    public ResponseEntity<SupplierResponseDto> getSupplier(@PathVariable("supplierId")Long supplierId){
         return ResponseEntity.status(HttpStatus.OK).body(supplierService.getSupplierById(supplierId));
     }
 

@@ -8,7 +8,11 @@ public record ProductDto(
         @NotBlank(message = "Product name is required")
         @Pattern(regexp = "^[a-zA-Z0-9 ]{3,}$", message = "Please enter a valid Product Name ")
         String productName,
+        @NotNull(message = "Please specify if product is countable")
+        Boolean isCountable,
         @Size(max = 250, message = "Description cannot exceed 250 characters")
+        @Pattern(regexp = "^[a-zA-Z0-9]{1,13}$", message = "Please enter a valid barcode")
+        String barcode,
         String description,
         @NotNull(message = "Selling Price required")
         @Positive(message = "Selling price must be greater than zero")
@@ -20,5 +24,6 @@ public record ProductDto(
         Long supplierId,
         @NotNull(message = "please choose a category")
         Long categoryId
+
 ) {
 }

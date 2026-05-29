@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public record TransactionDTO(
@@ -13,8 +14,8 @@ public record TransactionDTO(
         List<TransactionItemRequest> items,
         @NotNull(message = "Payment method is required")
         PaymentMethod paymentMethod,
-        @Pattern(regexp = "^(07|01)\\d{8}$", message = "Invalid number format")
-        String phoneNumber
-
+       /* @Pattern(regexp = "^(07|01)\\d{8}$", message = "Invalid number format")
+        String phoneNumber,*/
+        BigDecimal amountGiven
 ) {
 }

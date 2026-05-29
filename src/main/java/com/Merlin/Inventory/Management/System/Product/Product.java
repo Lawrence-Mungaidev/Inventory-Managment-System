@@ -30,6 +30,8 @@ public class Product {
     private Double minimumQuantity;
     private boolean countable;
     private boolean isActive;
+    @Column(unique = true)
+    private String barcode;
     @ManyToOne
     @JoinColumn(
             name = "supplier_Id"

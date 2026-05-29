@@ -4,7 +4,9 @@ import com.Merlin.Inventory.Management.System.Exception.BusinessRuleException;
 import com.Merlin.Inventory.Management.System.Exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -18,14 +20,22 @@ public class SupplierService {
     public SupplierResponseDto createSupplier(SupplierDto dto) {
         Supplier supplier =supplierMapper.toSupplier(dto);
 
+        if (supplierRepository.existsByContactNumberAndIdNot(dto.contactNumber(), supplier.getId())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Contact number already exists");
+        }
+
         var savedSupplier = supplierRepository.save(supplier);
 
         return supplierMapper.toSupplierResponseDto(savedSupplier);
     }
 
-    public SupplierResponseDto updateSupplier(Long supplierId, SupplierDto dto) {
+    public SupplierResponseDto updateSupplier(Long supplierId, SupplierUpdateDto dto) {
         Supplier supplier = supplierRepository.findById(supplierId)
                 .orElseThrow(()-> new ResourceNotFoundException("Supplier not found"));
+
+        if (supplierRepository.existsByContactNumberAndIdNot(dto.contactNumber(), supplierId)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Contact number already exists");
+        }
 
         if (dto.supplierName() != null) {
             supplier.setSupplierName(dto.supplierName());
@@ -67,6 +77,11 @@ public class SupplierService {
         Supplier supplier = supplierRepository.findById(supplierId)
                 .orElseThrow(()-> new ResourceNotFoundException("Supplier not found"));
 
+        if(!supplier.isActive())
+        {
+            throw new BusinessRuleException("The supplier is already deactivated");
+        }
+
         supplier.setActive(false);
 
         supplierRepository.save(supplier);
@@ -75,6 +90,11 @@ public class SupplierService {
     public void activateSupplier(Long supplierId) {
         Supplier supplier = supplierRepository.findById(supplierId)
                 .orElseThrow(() -> new ResourceNotFoundException("Supplier not found"));
+
+        if(supplier.isActive())
+        {
+            throw new BusinessRuleException("The supplier is already active");
+        }
 
         supplier.setActive(true);
 

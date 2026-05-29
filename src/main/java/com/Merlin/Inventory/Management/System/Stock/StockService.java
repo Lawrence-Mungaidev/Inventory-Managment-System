@@ -1,6 +1,7 @@
 package com.Merlin.Inventory.Management.System.Stock;
 
 
+import com.Merlin.Inventory.Management.System.Exception.BusinessRuleException;
 import com.Merlin.Inventory.Management.System.Exception.ResourceNotFoundException;
 import com.Merlin.Inventory.Management.System.Notification.NotificationService;
 import com.Merlin.Inventory.Management.System.Notification.NotificationType;
@@ -39,6 +40,7 @@ public class StockService {
 
         stock.setProduct(product);
         stock.setSupplier(supplier);
+        product.setBuyingPrice(dto.buyingPrice());
 
         stock.setAddedBy(authenticatedUser);
 
@@ -49,22 +51,21 @@ public class StockService {
             stock.setApprovedBy(authenticatedUser);
             stock.setApprovalDate(LocalDate.now());
             product.setCurrentStock(product.getCurrentStock() + dto.arrivedQuantity());
-            product.setBuyingPrice(dto.buyingPrice());
-            productRepository.save(product);
-
             savedStock = stockRepository.save(stock);
 
         }else {
             stock.setStatus(Status.PENDING);
             savedStock = stockRepository.save(stock);
 
-            User admin = userRepository.findByRole(ROLE.ADMIN)
-                    .orElseThrow(() -> new ResourceNotFoundException("Admin not found"));
+           List<User> admins = userRepository.findByRole(ROLE.ADMIN);
 
-           String message ="Requesting to update the new stock arrival on " + stock.getArrivalDate();
+           for(User admin : admins){
+               String message ="Requesting to update the new stock arrival on " + stock.getArrivalDate();
+               notificationService.createNotification(admin,message,NotificationType.RESTOCK_REQUEST);
+           }
 
-           notificationService.createNotification(admin,message,NotificationType.RESTOCK_REQUEST);
         }
+        productRepository.save(product);
 
         return stockMapper.toStockDto(savedStock);
 
@@ -76,24 +77,26 @@ public class StockService {
 
         Product product = stock.getProduct();
 
-        if (stock.getStatus().equals(Status.PENDING)) {
-            stock.setStatus(Status.APPROVED);
-            stock.setApprovedBy(authenticatedUser);
-            stock.setApprovalDate(LocalDate.now());
-            product.setCurrentStock(product.getCurrentStock() + stock.getArrivedQuantity());
-            product.setBuyingPrice(stock.getBuyingPrice());
-            productRepository.save(product);
-
-            String approvedMessage="Your Stock request of " + stock.getProduct().getProductName() + " on " + stock.getArrivalDate()  + " is approved";
-
-            notificationService.createNotification(stock.getAddedBy(), approvedMessage,NotificationType.STOCK_APPROVED);
-
-            if (product.getCurrentStock() < product.getMinimumQuantity()) {
-                String lowStock = "Product: " + product.getProductName() +  " is still below the minimum quantity";
-                notificationService.createNotification(authenticatedUser,lowStock , NotificationType.LOW_STOCK);
-            }
-
+        if(!stock.getStatus().equals(Status.PENDING)){
+            throw new BusinessRuleException("This stock has already been approved");
         }
+
+        stock.setStatus(Status.APPROVED);
+        stock.setApprovedBy(authenticatedUser);
+        stock.setApprovalDate(LocalDate.now());
+        product.setCurrentStock(product.getCurrentStock() + stock.getArrivedQuantity());
+        productRepository.save(product);
+
+        String approvedMessage="Your Stock request of " + stock.getProduct().getProductName() + " on " + stock.getArrivalDate()  + " is approved";
+
+        notificationService.createNotification(stock.getAddedBy(), approvedMessage,NotificationType.STOCK_APPROVED);
+
+        if (product.getCurrentStock() < product.getMinimumQuantity()) {
+            String lowStock = "Product: " + product.getProductName() +  " is still below the minimum quantity";
+            notificationService.createNotification(authenticatedUser,lowStock , NotificationType.LOW_STOCK);
+        }
+
+
         stockRepository.save(stock);
     }
 
@@ -103,18 +106,20 @@ public class StockService {
 
         String message= "The stock request of "+ stock.getProduct().getProductName() +" made on "+ stock.getArrivalDate() +" was Rejected, please confirm the restock and make another request";
 
-        if (stock.getStatus().equals(Status.PENDING)) {
-            stock.setStatus(Status.REJECTED);
-            notificationService.createNotification(stock.getAddedBy(), message, NotificationType.STOCK_REJECTED);
-            stock.setApprovalDate(LocalDate.now());
-            stock.setApprovedBy(authenticatedUser);
+        if (!stock.getStatus().equals(Status.PENDING)) {
+            throw new BusinessRuleException("This stock has already been rejected");
         }
+
+        stock.setStatus(Status.REJECTED);
+        notificationService.createNotification(stock.getAddedBy(), message, NotificationType.STOCK_REJECTED);
+        stock.setApprovalDate(LocalDate.now());
+        stock.setApprovedBy(authenticatedUser);
 
         stockRepository.save(stock);
     }
 
     public List<StockResponseDto> getAllStocks(){
-        return stockRepository.findAll()
+        return stockRepository.findAllByOrderByArrivalDateDesc()
                 .stream()
                 .map(stockMapper :: toStockResponseDto)
                 .toList();

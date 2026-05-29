@@ -3,6 +3,7 @@ package com.Merlin.Inventory.Management.System.TokenBlackListing;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,8 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class BlackListedToken {
 
     @Id
@@ -21,5 +24,6 @@ public class BlackListedToken {
 
     @Column(nullable = false)
     private LocalDateTime expiresAt;
+
 
 }

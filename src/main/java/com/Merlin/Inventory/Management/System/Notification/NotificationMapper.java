@@ -7,6 +7,6 @@ public class NotificationMapper {
 
 
     public NotificationResponseDto toNotificationResponseDto(Notification notification){
-        return new NotificationResponseDto(notification.getId(), notification.getMessage(), notification.getNotificationType());
+        return new NotificationResponseDto(notification.getId(), notification.getMessage(), notification.getNotificationType(), notification.isRead());
     }
 }

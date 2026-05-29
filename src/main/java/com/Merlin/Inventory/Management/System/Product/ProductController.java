@@ -24,7 +24,7 @@ public class ProductController {
 
     @PatchMapping("/update/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ProductResponseDto> updateProduct(@Valid @RequestBody ProductDto productDto, @PathVariable("userId") Long productId) {
+    public ResponseEntity<ProductResponseDto> updateProduct(@Valid @RequestBody ProductUpdateDto productDto, @PathVariable("userId") Long productId) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.update(productId, productDto));
     }
 
@@ -67,8 +67,13 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/ByProductsName")
+    @GetMapping("/search")
     public ResponseEntity<List<ProductResponseDto>> getAllProductsByProductName(@RequestParam("productName") String productName) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.getProductByName(productName));
+    }
+
+    @GetMapping("/barcode/{barcode}")
+    public ResponseEntity<ProductResponseDto> getProductByBarcode(@PathVariable("barcode") String barcode) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.findByBarcode(barcode));
     }
 }

@@ -16,11 +16,12 @@ public class UserMapper {
         user.setRole(ROLE.CASHIER);
         user.setActive(true);
         user.setCreatedAt(LocalDate.now());
+        user.setRole(dto.role());
 
         return user;
     }
 
     public UserResponseDto toUserResponseDto(User user) {
-        return new UserResponseDto(user.getUserId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPhoneNumber(), user.getRole());
+        return new UserResponseDto(user.getUserId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPhoneNumber(), user.isActive,user.getRole());
     }
 }

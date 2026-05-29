@@ -1,5 +1,6 @@
 package com.Merlin.Inventory.Management.System.Config;
 
+import com.Merlin.Inventory.Management.System.TokenBlackListing.BlackListedTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +24,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final BlackListedTokenService blackListedTokenService;
 
     @Override
     protected void doFilterInternal(
@@ -57,6 +59,16 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
+
+        if (blackListedTokenService.isBlacklisted(jwt)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write(
+                    "{\"message\": \"Token has been invalidated. Please login again.\"}"
+            );
+            return;
+        }
+
         filterChain.doFilter(request, response);
 
     }

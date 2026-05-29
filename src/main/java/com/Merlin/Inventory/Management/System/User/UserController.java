@@ -30,39 +30,35 @@ public class UserController {
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<UserResponseDto> updateUser(@Valid @RequestBody UserDto userDto, @AuthenticationPrincipal User authenticationUser) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(authenticationUser, userDto));
+    public ResponseEntity<UserResponseDto> updateUser(@Valid @RequestBody UserUpdateDto updateDto, @AuthenticationPrincipal User authenticationUser) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(authenticationUser, updateDto));
     }
 
     @GetMapping("/userName")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UserResponseDto>> getUserByName(@Valid @RequestParam String firstName, @Valid @RequestParam String lastName) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.findUserByName(firstName, lastName));
+    public ResponseEntity<List<UserResponseDto>> getUserByName(@Valid @RequestParam String fullName) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.findUserByName(fullName));
     }
 
-    @PostMapping("/activate/{user-id}")
+    @PatchMapping("/activate/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> activateUser(@PathVariable("user-id") Long userId){
+    public ResponseEntity<Void> activateUser(@PathVariable("userId") Long userId){
         userService.activateUser(userId);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/deactivate/{user-id}")
+    @PatchMapping("/deactivate/{user-id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deactivateUser(@PathVariable("user-id") Long userId){
         userService.deactivateUser(userId);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/changepassword")
+    @PatchMapping("/changepassword")
     public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordDto changePasswordDto, @AuthenticationPrincipal User authUser) {
         userService.changePassword(authUser, changePasswordDto);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/forgotPassword")
-    public ResponseEntity<ForgortResponse> forgotPassword(@Valid @RequestParam String userEmail){
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.forgotPassword(userEmail));
-    }
 
 }

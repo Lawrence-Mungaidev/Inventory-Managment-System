@@ -27,8 +27,18 @@ public class ProductService {
         Supplier supplier = supplierRepository.findById(dto.supplierId())
                 .orElseThrow(() -> new ResourceNotFoundException("Supplier Not Found"));
 
+        if (!supplier.isActive()) {
+            throw new BusinessRuleException("Cannot assign an inactive supplier to a product");
+        }
+
         Category category = categoryRepository.findById(dto.categoryId())
                         .orElseThrow(() -> new ResourceNotFoundException("Category Not Found"));
+
+        if(dto.barcode() == null || dto.barcode().isBlank()){
+            product.setBarcode("GEN" + System.currentTimeMillis());
+        }else {
+            product.setBarcode(dto.barcode());
+        }
 
         product.setSupplier(supplier);
         product.setCategory(category);
@@ -38,7 +48,7 @@ public class ProductService {
         return productMapper.toProductResponseDto(savedProduct);
     }
 
-    public ProductResponseDto update(Long productId,ProductDto dto) {
+    public ProductResponseDto update(Long productId,ProductUpdateDto dto) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(()-> new ResourceNotFoundException("Product Not Found"));
 
@@ -67,6 +77,12 @@ public class ProductService {
                     .orElseThrow(() -> new ResourceNotFoundException("Supplier Not Found"));
 
             product.setSupplier(supplier);
+        }
+        if(dto.barcode() != null){
+            product.setBarcode(dto.barcode());
+        }
+        if(dto.isCountable()!=null){
+            product.setCountable(dto.isCountable());
         }
 
         var savedProduct = productRepository.save(product);
@@ -97,6 +113,10 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product Not Found"));
 
+        if(!product.isActive()){
+            throw new BusinessRuleException("The product is already deactivated");
+        }
+
         product.setActive(false);
 
         productRepository.save(product);
@@ -105,6 +125,10 @@ public class ProductService {
     public void activateProduct(Long productId){
         Product product = productRepository.findById(productId)
                 .orElseThrow(()-> new ResourceNotFoundException("Product Not Found"));
+
+        if(product.isActive()){
+            throw new BusinessRuleException("The product is already active");
+        }
 
         product.setActive(true);
 
@@ -131,6 +155,13 @@ public class ProductService {
                 .stream()
                 .map(productMapper :: toProductResponseDto)
                 .toList();
+    }
+
+    public ProductResponseDto findByBarcode(String barcode){
+        Product product = productRepository.findByBarcode(barcode)
+                .orElseThrow(() -> new ResourceNotFoundException("Product Not Found"));
+
+        return productMapper.toProductResponseDto(product);
     }
 
 }

@@ -34,11 +34,9 @@ public class NotificationService {
     }
 
     public List<NotificationResponseDto> getNotificationByUserId(User authenticatedUser){
-        Long userId = authenticatedUser.getUserId();
-
-        return notificationRepository.findByReceiverOrderByCreationDateDesc(userId)
+        return notificationRepository.findByReceiverOrderByCreationDateDesc(authenticatedUser)
                 .stream()
-                .map(notificationMapper :: toNotificationResponseDto)
+                .map(notificationMapper::toNotificationResponseDto)
                 .toList();
     }
 

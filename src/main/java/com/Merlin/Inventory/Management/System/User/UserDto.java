@@ -2,6 +2,7 @@ package com.Merlin.Inventory.Management.System.User;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public record UserDto (
@@ -21,6 +22,8 @@ public record UserDto (
 
         @NotBlank(message = "Phone Number required")
         @Pattern(regexp = "^(07|01)\\d{8}$", message = "Invalid number format")
-        String phoneNumber
+        String phoneNumber,
+        @NotNull(message = "Role is required")
+        ROLE role
 ){
 }

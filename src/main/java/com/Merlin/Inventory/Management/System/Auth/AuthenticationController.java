@@ -2,15 +2,14 @@ package com.Merlin.Inventory.Management.System.Auth;
 
 import com.Merlin.Inventory.Management.System.Config.JwtService;
 import com.Merlin.Inventory.Management.System.TokenBlackListing.BlackListedTokenService;
+import com.Merlin.Inventory.Management.System.User.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -23,18 +22,14 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final BlackListedTokenService blackListedTokenService;
     private final JwtService jwtService;
+    private final UserService userService;
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthResponseDto> registerUser(
-           @Valid @RequestBody AuthRegisterDto dto){
-        return ResponseEntity.ok(authenticationService.register(dto));
-    }
 
     @PostMapping("/logIn")
     public ResponseEntity<AuthTokenResponse> logInUser(
             @Valid @RequestBody AuthLogInDto dto
     ){
-        return ResponseEntity.ok(authenticationService.logIn(dto));
+        return ResponseEntity.status(HttpStatus.OK).body(authenticationService.logIn(dto));
     }
 
     @PostMapping("/logout")
@@ -52,5 +47,10 @@ public class AuthenticationController {
         }
 
         return ResponseEntity.ok("Logged out successfully");
+    }
+
+    @PostMapping("/forgotPassword")
+    public ResponseEntity<ForgortResponse> forgotPassword(@Valid @RequestBody ForgortPasswordDto dto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.forgotPassword(dto));
     }
 }

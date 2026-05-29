@@ -1,5 +1,6 @@
 package com.Merlin.Inventory.Management.System.StockAdjustment;
 
+import com.Merlin.Inventory.Management.System.Exception.BusinessRuleException;
 import com.Merlin.Inventory.Management.System.Exception.InvalidProductOperationException;
 import com.Merlin.Inventory.Management.System.Exception.ResourceNotFoundException;
 import com.Merlin.Inventory.Management.System.Notification.NotificationService;
@@ -50,13 +51,15 @@ public class StockAdjustmentService {
             savedStockAdjustment = stockAdjustmentRepository.save(stockAdjustment);
         }else {
             stockAdjustment.setReportedBy(authenticatedUser);
+            stockAdjustment.setStatus(Status.PENDING);
 
-            User admin = userRepository.findByRole(ROLE.ADMIN)
-                    .orElseThrow(()-> new ResourceNotFoundException("User not found"));
+            List<User> admins = userRepository.findByRole(ROLE.ADMIN);
 
-            String message = "Requesting approval for stock adjustment from " + authenticatedUser.getUsername() + "\n For: " + product.getProductName() + "\n Reason: " + dto.adjustmentType() + "\n What Occurred: " + dto.reason();
-
-            notificationService.createNotification(admin, message, NotificationType.STOCK_ADJUSTMENT_REQUEST );
+            for(User admin : admins)
+            {
+                String message = "Requesting approval for stock adjustment from " + authenticatedUser.getUsername() + "\n For: " + product.getProductName() + "\n Reason: " + dto.adjustmentType() + "\n What Occurred: " + dto.reason();
+                notificationService.createNotification(admin, message, NotificationType.STOCK_ADJUSTMENT_REQUEST );
+            }
 
             savedStockAdjustment = stockAdjustmentRepository.save(stockAdjustment);
         }
@@ -68,6 +71,10 @@ public class StockAdjustmentService {
     public void approveStockAdjustment(Long adjustmentId, User authenticatedUser) {
         StockAdjustment stockAdjustment = stockAdjustmentRepository.findById(adjustmentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Stock Adjustment not found"));
+
+       if(!stockAdjustment.getStatus().equals(Status.PENDING)){
+           throw new BusinessRuleException("This stockAdjustment has already been approve by" + stockAdjustment.getApprovedBy().getFirstName());
+       }
 
         stockAdjustment.setStatus(Status.APPROVED);
         stockAdjustment.setApprovedBy(authenticatedUser);
@@ -96,15 +103,18 @@ public class StockAdjustmentService {
 
         String message = "Your Stock Adjustment for " + stockAdjustment.getProduct() + " made on " + stockAdjustment.getReportedDate() +" has been Rejected";
 
-        if(stockAdjustment.getStatus().equals(Status.PENDING)){
-            stockAdjustment.setStatus(Status.REJECTED);
-            stockAdjustment.setApprovedBy(authenticatedUser);
-            stockAdjustment.setApprovalDate(LocalDate.now());
-
-            notificationService.createNotification(stockAdjustment.getReportedBy(), message ,NotificationType.STOCK_ADJUSTMENT_REJECTED);
-
-            stockAdjustmentRepository.save(stockAdjustment);
+        if(!stockAdjustment.getStatus().equals(Status.PENDING)){
+            throw new BusinessRuleException("This stockAdjustment has already been Rejected by " + stockAdjustment.getApprovedBy().getFirstName());
         }
+
+        stockAdjustment.setStatus(Status.REJECTED);
+        stockAdjustment.setApprovedBy(authenticatedUser);
+        stockAdjustment.setApprovalDate(LocalDate.now());
+
+        notificationService.createNotification(stockAdjustment.getReportedBy(), message ,NotificationType.STOCK_ADJUSTMENT_REJECTED);
+
+        stockAdjustmentRepository.save(stockAdjustment);
+
     }
 
     public List<StockAdjustmentResponse> getAllStockAdjustments(){
