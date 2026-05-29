@@ -27,8 +27,8 @@ public class ReportService {
     private final StockAdjustmentRepository adjustmentRepository;
 
     public DailyReportDto getDailyReport() {
-        LocalDate start = LocalDate.from(LocalDate.now().atStartOfDay());
-        LocalDate end = LocalDate.now();
+        LocalDateTime start = LocalDate.now().atStartOfDay();
+        LocalDateTime end = LocalDate.now().atTime(23,59,59);
         LocalDate today = LocalDate.now();
 
         List<Transaction> transactionList = transactionRepository.findByTransactionDateBetweenOrderByTransactionDateDesc(start, end);
@@ -55,7 +55,7 @@ public class ReportService {
         List<ItemsSold> soldItems = buildMostSoldItems(transactionList);
 
         LocalDate start = LocalDate.now().withDayOfMonth(1);
-        LocalDate end = LocalDate.now();
+        LocalDate end = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
 
         BigDecimal totalStockSales = stockRepository.getTotalSalesByApprovalDateBetween(start,end);
 
@@ -106,7 +106,7 @@ public class ReportService {
         BigDecimal loss = BigDecimal.ZERO;
 
         for(StockAdjustment stockAdjustment : stockAdjustments){
-           BigDecimal total = stockAdjustment.getProduct().getBuyingPrice()
+            BigDecimal total = stockAdjustment.getProduct().getBuyingPrice()
                     .multiply(BigDecimal.valueOf(stockAdjustment.getQuantity()));
             loss = loss.add(total);
         }

@@ -29,7 +29,7 @@ public class Transaction {
     private String mpesaReference;
     @Column(nullable = false)
     private LocalDateTime createdAt;
-    private LocalDate transactionDate;
+    private LocalDateTime transactionDate;
     @Enumerated(EnumType.STRING)
     private Status status;
     @Column(nullable = false)
