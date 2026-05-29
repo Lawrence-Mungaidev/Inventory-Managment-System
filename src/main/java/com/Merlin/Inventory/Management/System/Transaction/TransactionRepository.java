@@ -17,7 +17,7 @@ public interface TransactionRepository extends JpaRepository<Transaction,Long> {
     @Query("SELECT SUM(t.totalAmount) FROM Transaction t WHERE t.transactionDate BETWEEN :start AND :end AND t.status = 'COMPLETED'")
     BigDecimal getTotalSalesByDateBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
-    int countByTransactionDateBetweenAndStatus(LocalDate start, LocalDate end, Status status);
+    int countByTransactionDateBetweenAndStatus(LocalDateTime start, LocalDateTime end, Status status);
 
     Optional<Transaction> findByMpesaReference(String mpesaReference);
     List<Transaction> findByStatus(Status status);

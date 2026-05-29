@@ -44,8 +44,8 @@ public class ReportService {
     }
 
     public MonthlyReportDto getMonthlyReport() {
-        LocalDateTime startOfMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
-        LocalDateTime endOfMonth = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).atTime(23,59,59);
+        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
+        LocalDate endOfMonth = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
 
         List<Transaction> transactionList = transactionRepository.findByTransactionDateBetweenOrderByTransactionDateDesc(startOfMonth, endOfMonth);
 
