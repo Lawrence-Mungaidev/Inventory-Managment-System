@@ -25,6 +25,7 @@ public class Product {
     private String productName;
     private String description;
     private Double currentStock;
+    @Column(nullable = true)
     private BigDecimal buyingPrice;
     private BigDecimal sellingPrice;
     private Double minimumQuantity;

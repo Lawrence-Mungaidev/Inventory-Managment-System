@@ -16,7 +16,7 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
     List<Stock> findByProductId(Long productId);
     List<Stock> findBySupplierId(Long supplierId);
 
-    @Query("SELECT SUM(t.totalAmount) FROM Transaction t WHERE t.createdAt BETWEEN :start AND :end AND t.status = 'COMPLETED'")
+    @Query("SELECT SUM(s.totalAmount) FROM Stock s WHERE s.approvalDate BETWEEN :start AND :end AND s.status = 'APPROVED'")
     BigDecimal getTotalSalesByApprovalDateBetween(@Param("start") LocalDate start, @Param("end") LocalDate end);
     List<Stock> findByExpiryDateBefore(LocalDate today);
     List<Stock> findByExpiryDateBetween(LocalDate start,  LocalDate end);

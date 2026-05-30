@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -45,9 +46,9 @@ public class TransactionController {
     @GetMapping("/range")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<TransactionResponseDto>> getAllTransactionsRange(
-            @RequestParam LocalDateTime start,
-            @RequestParam LocalDateTime end) {
+            @RequestParam LocalDate start,
+            @RequestParam LocalDate end) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(transactionService.getTransactionByDateRange(start, end));
+                .body(transactionService.getTransactionByDateRange(start.atStartOfDay(), end.atTime(23, 59, 59)));
     }
 }

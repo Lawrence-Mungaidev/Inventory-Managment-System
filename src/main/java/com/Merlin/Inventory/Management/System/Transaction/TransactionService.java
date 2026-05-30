@@ -127,6 +127,7 @@ public class TransactionService {
             }
 
             TransactionItem transactionItem = new TransactionItem(product, itemRequest.quantity());
+            transactionItem.setBuyingPrice(product.getBuyingPrice());
             transactionItems.add(transactionItem);
             totalAmount = totalAmount.add(transactionItem.getSubtotal());
         }
@@ -169,8 +170,8 @@ public class TransactionService {
 
     public List<TransactionResponseDto> getTodayTransactions() {
 
-        LocalDate start = LocalDate.now();
-        LocalDate end = LocalDate.now();
+        LocalDateTime start = LocalDate.now().atStartOfDay();
+        LocalDateTime end = LocalDate.now().atTime(23, 59, 59);
 
       return transactionRepository.findByTransactionDateBetweenOrderByTransactionDateDesc(start,end)
               .stream()
@@ -178,7 +179,7 @@ public class TransactionService {
               .toList();
     }
 
-    public List<TransactionResponseDto> getTransactionByDateRange(LocalDate start, LocalDate end) {
+    public List<TransactionResponseDto> getTransactionByDateRange(LocalDateTime start, LocalDateTime end) {
         return transactionRepository.findByTransactionDateBetweenOrderByTransactionDateDesc(start,end)
                 .stream()
                 .map(transaction -> transactionMapper.toTransactionResponseDto(transaction, null))

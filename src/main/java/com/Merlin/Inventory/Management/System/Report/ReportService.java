@@ -7,6 +7,7 @@ import com.Merlin.Inventory.Management.System.Transaction.Status;
 import com.Merlin.Inventory.Management.System.Transaction.Transaction;
 import com.Merlin.Inventory.Management.System.Transaction.TransactionRepository;
 import com.Merlin.Inventory.Management.System.TransactionItem.TransactionItem;
+import com.Merlin.Inventory.Management.System.TransactionItem.TransactionItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ public class ReportService {
     private final TransactionRepository transactionRepository;
     private final StockRepository stockRepository;
     private final StockAdjustmentRepository adjustmentRepository;
+    private final TransactionItemRepository transactionItemRepository;
 
     public DailyReportDto getDailyReport() {
         LocalDateTime start = LocalDate.now().atStartOfDay();
@@ -44,28 +46,33 @@ public class ReportService {
     }
 
     public MonthlyReportDto getMonthlyReport() {
-        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
-        LocalDate endOfMonth = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
+        LocalDateTime startOfMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+        LocalDateTime endOfMonth = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).atTime(23, 59, 59);
 
-        List<Transaction> transactionList = transactionRepository.findByTransactionDateBetweenOrderByTransactionDateDesc(startOfMonth, endOfMonth);
+        List<Transaction> transactionList = transactionRepository
+                .findByTransactionDateBetweenOrderByTransactionDateDesc(startOfMonth, endOfMonth);
 
-        BigDecimal totalSales = transactionRepository.getTotalSalesByDateBetween(startOfMonth, endOfMonth);
-        if(totalSales == null) totalSales = BigDecimal.ZERO;
-        int numberOfTransactions = transactionRepository.countByTransactionDateBetweenAndStatus(startOfMonth,endOfMonth,Status.COMPLETED);
+        BigDecimal totalSales = transactionRepository
+                .getTotalSalesByDateBetween(startOfMonth, endOfMonth);
+        if (totalSales == null) totalSales = BigDecimal.ZERO;
+
+        int numberOfTransactions = transactionRepository
+                .countByTransactionDateBetweenAndStatus(startOfMonth, endOfMonth, Status.COMPLETED);
+
         List<ItemsSold> soldItems = buildMostSoldItems(transactionList);
 
         LocalDate start = LocalDate.now().withDayOfMonth(1);
         LocalDate end = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
 
-        BigDecimal totalStockSales = stockRepository.getTotalSalesByApprovalDateBetween(start,end);
+        BigDecimal costOfGoodsSold = transactionItemRepository
+                .getTotalCostOfGoodsSold(startOfMonth, endOfMonth);
+        if (costOfGoodsSold == null) costOfGoodsSold = BigDecimal.ZERO;
 
-        BigDecimal profit = totalSales.subtract(totalStockSales);
+        BigDecimal profit = totalSales.subtract(costOfGoodsSold);
 
-        BigDecimal loss = getLoss(start,end);
+        BigDecimal loss = getLoss(start, end);
 
-        return new MonthlyReportDto(LocalDate.now().toString(), totalSales,numberOfTransactions,soldItems,profit,loss);
-
-
+        return new MonthlyReportDto(LocalDate.now().toString(), totalSales, numberOfTransactions, soldItems, profit, loss);
     }
 
     private List<ItemsSold> buildMostSoldItems(List<Transaction> transactions) {
@@ -101,12 +108,16 @@ public class ReportService {
     }
 
     private BigDecimal getLoss(LocalDate startDate, LocalDate endDate) {
-        List<StockAdjustment> stockAdjustments = adjustmentRepository.findAllStockAdjustmentBetweenReportedDate(startDate, endDate);
+        List<StockAdjustment> stockAdjustments = adjustmentRepository
+                .findAllStockAdjustmentBetweenReportedDate(startDate, endDate);
 
         BigDecimal loss = BigDecimal.ZERO;
 
-        for(StockAdjustment stockAdjustment : stockAdjustments){
-            BigDecimal total = stockAdjustment.getProduct().getBuyingPrice()
+        for (StockAdjustment stockAdjustment : stockAdjustments) {
+            BigDecimal buyingPrice = stockAdjustment.getProduct().getBuyingPrice();
+            if (buyingPrice == null) continue;
+
+            BigDecimal total = buyingPrice
                     .multiply(BigDecimal.valueOf(stockAdjustment.getQuantity()));
             loss = loss.add(total);
         }
@@ -114,27 +125,31 @@ public class ReportService {
         return loss;
     }
 
-    public DateRangeReportDto getDateRangeReportDto(LocalDate start, LocalDate end){
-        List<Transaction> transactionList = transactionRepository.findByTransactionDateBetweenOrderByTransactionDateDesc(start.atStartOfDay(), end.atTime(23,59,59));
+    public DateRangeReportDto getDateRangeReportDto(LocalDate start, LocalDate end) {
+        LocalDateTime startDateTime = start.atStartOfDay();
+        LocalDateTime endDateTime = end.atTime(23, 59, 59);
 
-        BigDecimal totalSales = transactionRepository.getTotalSalesByDateBetween(start.atStartOfDay(), end.atTime(23,59,59));
-        if(totalSales == null) totalSales = BigDecimal.ZERO;
-        int numberOfTransactions = transactionRepository.countByTransactionDateBetweenAndStatus(start.atStartOfDay(), end.atTime(23,59,59),Status.COMPLETED);
+        List<Transaction> transactionList = transactionRepository
+                .findByTransactionDateBetweenOrderByTransactionDateDesc(startDateTime, endDateTime);
+
+        BigDecimal totalSales = transactionRepository
+                .getTotalSalesByDateBetween(startDateTime, endDateTime);
+        if (totalSales == null) totalSales = BigDecimal.ZERO;
+
+        BigDecimal costOfGoodsSold = transactionItemRepository
+                .getTotalCostOfGoodsSold(startDateTime, endDateTime);
+        if (costOfGoodsSold == null) costOfGoodsSold = BigDecimal.ZERO;
+
+        int numberOfTransactions = transactionRepository
+                .countByTransactionDateBetweenAndStatus(startDateTime, endDateTime, Status.COMPLETED);
 
         List<ItemsSold> soldItems = buildMostSoldItems(transactionList);
 
-        LocalDate startOfMonth = LocalDate.now().withDayOfMonth(1);
-        LocalDate endOfMonth = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
+        BigDecimal profit = totalSales.subtract(costOfGoodsSold);
 
-        BigDecimal totalStockSales = stockRepository.getTotalSalesByApprovalDateBetween(startOfMonth,endOfMonth);
+        BigDecimal loss = getLoss(start, end);
 
-        BigDecimal profit = totalSales.subtract(totalStockSales);
-
-        BigDecimal loss = getLoss(startOfMonth,endOfMonth);
-
-        return new DateRangeReportDto(startOfMonth,endOfMonth, totalSales,numberOfTransactions,soldItems,profit,loss);
-
+        return new DateRangeReportDto(start, end, totalSales, numberOfTransactions, soldItems, profit, loss);
     }
-
 
 }

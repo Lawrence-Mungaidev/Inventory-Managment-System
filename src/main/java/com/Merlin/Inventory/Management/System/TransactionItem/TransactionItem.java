@@ -26,6 +26,8 @@ public class TransactionItem {
     private double quantity;
     private BigDecimal price;
     private BigDecimal subtotal;
+    @Column(nullable = true)
+    private BigDecimal buyingPrice;
     @ManyToOne
     @JoinColumn(
             name = "transaction_Id"
