@@ -25,7 +25,7 @@ public class TransactionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.create(dto, authenticatedUser));
     }
 
-     @GetMapping
+    @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<TransactionResponseDto>> getAllTransactions(){
         return ResponseEntity.status(HttpStatus.OK).body(transactionService.getAllTransactions());
