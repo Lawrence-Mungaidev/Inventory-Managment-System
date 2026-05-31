@@ -60,4 +60,9 @@ public class StockController {
     public ResponseEntity<List<StockResponseDto>> getAllStocksBySupplier(@PathVariable Long supplierId) {
         return ResponseEntity.status(HttpStatus.OK).body(stockService.getAllStocksBySupplier(supplierId));
     }
+
+    @GetMapping("/{stockId}")
+    public ResponseEntity<StockResponseDto> getStockById(@PathVariable("stockId") Long stockId) {
+        return ResponseEntity.status(HttpStatus.OK).body(stockService.getStockById(stockId));
+    }
 }

@@ -23,6 +23,7 @@ public class TransactionMapper {
         transaction.setPaymentMethod(dto.paymentMethod());
         //transaction.setPhoneNumber(dto.phoneNumber());
         transaction.setCreatedAt(LocalDateTime.now());
+        transaction.setTransactionDate(LocalDateTime.now());
 
         return transaction;
     }

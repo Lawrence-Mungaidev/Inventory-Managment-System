@@ -145,4 +145,11 @@ public class StockService {
                 .map(stockMapper :: toStockResponseDto)
                 .toList();
     }
+
+    public StockResponseDto getStockById(Long stockId){
+        Stock stock = stockRepository.findById(stockId)
+                .orElseThrow(()-> new  ResourceNotFoundException("Stock not found"));
+
+        return stockMapper.toStockResponseDto(stock);
+    }
 }

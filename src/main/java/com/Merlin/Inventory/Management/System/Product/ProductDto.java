@@ -10,9 +10,9 @@ public record ProductDto(
         String productName,
         @NotNull(message = "Please specify if product is countable")
         Boolean isCountable,
-        @Size(max = 250, message = "Description cannot exceed 250 characters")
         @Pattern(regexp = "^[a-zA-Z0-9]{1,13}$", message = "Please enter a valid barcode")
         String barcode,
+        @Size(max = 250, message = "Description cannot exceed 250 characters")
         String description,
         @NotNull(message = "Selling Price required")
         @Positive(message = "Selling price must be greater than zero")

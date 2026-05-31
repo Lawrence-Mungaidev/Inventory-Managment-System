@@ -32,19 +32,16 @@ public class TransactionController {
     }
 
     @GetMapping("/{transactionId}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<TransactionResponseDto> getTransactionById(@PathVariable Long transactionId){
         return ResponseEntity.status(HttpStatus.OK).body(transactionService.getTransactionById(transactionId));
     }
 
     @GetMapping("/today")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<TransactionResponseDto>> getAllTransactionsToday(){
         return ResponseEntity.status(HttpStatus.OK).body(transactionService.getTodayTransactions());
     }
 
     @GetMapping("/range")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<TransactionResponseDto>> getAllTransactionsRange(
             @RequestParam LocalDate start,
             @RequestParam LocalDate end) {

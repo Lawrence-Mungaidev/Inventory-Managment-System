@@ -23,6 +23,6 @@ public class StockMapper {
     }
 
     public StockResponseDto toStockResponseDto(Stock stock){
-        return  new StockResponseDto(stock.getId(), stock.getProduct().getId(), stock.getArrivedQuantity(), stock.getTotalAmount(),stock.getSupplier().getSupplierName(), stock.getAddedBy().getFirstName(),stock.getApprovedBy().getFirstName(),stock.getApprovalDate(),stock.getStatus());
+        return  new StockResponseDto(stock.getId(), stock.getProduct().getProductName(), stock.getArrivedQuantity(), stock.getTotalAmount(),stock.getSupplier().getSupplierName(), stock.getAddedBy().getFirstName(),stock.getApprovedBy().getFirstName(),stock.getApprovalDate(),stock.getStatus());
     }
 }

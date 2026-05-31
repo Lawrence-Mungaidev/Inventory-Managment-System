@@ -164,4 +164,10 @@ public class ProductService {
         return productMapper.toProductResponseDto(product);
     }
 
+    public ProductResponseDto findById(Long productId){
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product Not Found"));
+
+        return productMapper.toProductResponseDto(product);
+    }
 }

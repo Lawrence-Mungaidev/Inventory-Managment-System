@@ -5,7 +5,7 @@ import java.time.LocalDate;
 
 public record StockResponseDto(
         Long Id,
-        Long productId,
+        String productName,
         Double arrivedQuantity,
         BigDecimal totalBoughtPrice,
         String supplierName,

@@ -76,4 +76,10 @@ public class ProductController {
     public ResponseEntity<ProductResponseDto> getProductByBarcode(@PathVariable("barcode") String barcode) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.findByBarcode(barcode));
     }
+
+    @GetMapping("/{productId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ProductResponseDto> getProductById(@PathVariable("productId") Long productId) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.findById(productId));
+    }
 }
