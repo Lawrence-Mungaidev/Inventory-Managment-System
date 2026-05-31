@@ -15,6 +15,9 @@ import com.Merlin.Inventory.Management.System.User.ROLE;
 import com.Merlin.Inventory.Management.System.User.User;
 import com.Merlin.Inventory.Management.System.User.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -154,11 +157,10 @@ public class TransactionService {
         }
     }
 
-    public List<TransactionResponseDto> getAllTransactions() {
-        return transactionRepository.findAllByOrderByTransactionDateDesc()
-                .stream()
-                .map(transaction -> transactionMapper.toTransactionResponseDto(transaction, null))
-                .toList();
+    public Page<TransactionResponseDto> getAllTransactions(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return transactionRepository.findAllByOrderByTransactionDateDesc(pageable)
+                .map(transaction -> transactionMapper.toTransactionResponseDto(transaction, null));
     }
 
     public TransactionResponseDto getTransactionById(Long transactionId) {

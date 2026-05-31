@@ -3,6 +3,7 @@ package com.Merlin.Inventory.Management.System.StockAdjustment;
 import com.Merlin.Inventory.Management.System.User.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,9 +40,10 @@ public class StockAdjustmentController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<StockAdjustmentResponse>> getAllStockAdjustments()
-    {
-        return ResponseEntity.status(HttpStatus.OK).body(stockAdjustmentService.getAllStockAdjustments());
+    public ResponseEntity<Page<StockAdjustmentResponse>> getAllStockAdjustments(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(stockAdjustmentService.getAllStockAdjustments(page, size));
     }
 
     @GetMapping("/product/{productId}")

@@ -13,6 +13,9 @@ import com.Merlin.Inventory.Management.System.User.ROLE;
 import com.Merlin.Inventory.Management.System.User.User;
 import com.Merlin.Inventory.Management.System.User.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -118,11 +121,10 @@ public class StockService {
         stockRepository.save(stock);
     }
 
-    public List<StockResponseDto> getAllStocks(){
-        return stockRepository.findAllByOrderByArrivalDateDesc()
-                .stream()
-                .map(stockMapper :: toStockResponseDto)
-                .toList();
+    public Page<StockResponseDto> getAllStocks(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return stockRepository.findAllByOrderByIdDesc(pageable)
+                .map(stockMapper::toStockResponseDto);
     }
 
     public List<StockResponseDto> getStockByStatus(Status status){
