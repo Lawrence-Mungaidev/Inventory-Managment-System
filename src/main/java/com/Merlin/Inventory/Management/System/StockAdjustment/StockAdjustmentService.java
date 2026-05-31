@@ -117,10 +117,10 @@ public class StockAdjustmentService {
 
     }
 
-    public List<StockAdjustmentResponse> getAllStockAdjustments(){
-        return stockAdjustmentRepository.findAll()
+    public List<StockAdjustmentResponse> getAllStockAdjustments() {
+        return stockAdjustmentRepository.findAllByOrderByReportedDateDesc()
                 .stream()
-                .map(stockAdjustmentMapper :: toStockAdjustmentResponse)
+                .map(stockAdjustmentMapper::toStockAdjustmentResponse)
                 .toList();
     }
 

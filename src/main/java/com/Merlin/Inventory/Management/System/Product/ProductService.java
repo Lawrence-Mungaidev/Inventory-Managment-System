@@ -3,6 +3,7 @@ package com.Merlin.Inventory.Management.System.Product;
 import com.Merlin.Inventory.Management.System.Category.Category;
 import com.Merlin.Inventory.Management.System.Category.CategoryRepository;
 import com.Merlin.Inventory.Management.System.Exception.BusinessRuleException;
+import com.Merlin.Inventory.Management.System.Exception.DuplicateResourceException;
 import com.Merlin.Inventory.Management.System.Exception.ResourceNotFoundException;
 import com.Merlin.Inventory.Management.System.Supplier.Supplier;
 import com.Merlin.Inventory.Management.System.Supplier.SupplierRepository;
@@ -27,15 +28,21 @@ public class ProductService {
         Supplier supplier = supplierRepository.findById(dto.supplierId())
                 .orElseThrow(() -> new ResourceNotFoundException("Supplier Not Found"));
 
+        if (productRepository.existsByBarcode(dto.barcode())) {
+            throw new DuplicateResourceException("A product with this barcode already exists");
+        }
+
         if (!supplier.isActive()) {
             throw new BusinessRuleException("Cannot assign an inactive supplier to a product");
         }
+
 
         Category category = categoryRepository.findById(dto.categoryId())
                         .orElseThrow(() -> new ResourceNotFoundException("Category Not Found"));
 
         if(dto.barcode() == null || dto.barcode().isBlank()){
-            product.setBarcode("GEN" + System.currentTimeMillis());
+            String barcode = generateCode(product);
+            product.setBarcode(barcode);
         }else {
             product.setBarcode(dto.barcode());
         }
@@ -46,6 +53,16 @@ public class ProductService {
         var savedProduct = productRepository.save(product);
 
         return productMapper.toProductResponseDto(savedProduct);
+    }
+
+    private String generateCode(Product product){
+        String prefix = product.getProductName().length() >= 3
+                ? product.getProductName().substring(0, 3).toUpperCase()
+                : product.getProductName().toUpperCase();
+
+        long count = productRepository.count();
+
+        return prefix + String.format("%03d", count + 1);
     }
 
     public ProductResponseDto update(Long productId,ProductUpdateDto dto) {

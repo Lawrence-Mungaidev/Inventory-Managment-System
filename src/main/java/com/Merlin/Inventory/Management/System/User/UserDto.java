@@ -16,10 +16,6 @@ public record UserDto (
         @Email(message = "Invalid Email format")
         String email,
 
-        @NotBlank(message = "password is required")
-        @Pattern(regexp = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%^&+=!.]).{8,}$", message = "Password must be at least 8 characters, one uppercase, one number and one special character")
-        String password,
-
         @NotBlank(message = "Phone Number required")
         @Pattern(regexp = "^(07|01)\\d{8}$", message = "Invalid number format")
         String phoneNumber,

@@ -22,4 +22,5 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
     List<Stock> findByExpiryDateBetween(LocalDate start,  LocalDate end);
     List<Stock> findAllByOrderByArrivalDateDesc();
 
+
 }

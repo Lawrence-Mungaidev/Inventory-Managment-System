@@ -24,15 +24,18 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
 
-    public UserResponseDto createUser(UserDto dto){
+    public UserResponseDto createUser(UserDto dto) {
         User user = userMapper.toUser(dto);
-        var password = passwordEncoder.encode(dto.password());
 
-        user.setPassword(password);
+        String tempPassword = "12345678Q.";
+        user.setPassword(passwordEncoder.encode(tempPassword));
+        user.setMustChangePassword(true);
+
         var savedUser = userRepository.save(user);
 
-        return userMapper.toUserResponseDto(savedUser);
+        emailService.sendEmail(savedUser.getEmail(), "Temporary Password", tempPassword);
 
+        return userMapper.toUserResponseDto(savedUser);
     }
 
     public List<UserResponseDto> findAll(){

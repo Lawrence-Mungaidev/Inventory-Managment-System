@@ -64,4 +64,11 @@ public class GlobalExceptionHandler {
         errors.put("message", ex.getReason());
         return new ResponseEntity<>(errors, ex.getStatusCode());
     }
+
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<?> handleDuplicateResourceException(BusinessRuleException ex){
+        var errors = new HashMap<String, String>();
+        errors.put("message", ex.getMessage());
+        return new ResponseEntity<>(errors, HttpStatus.CONFLICT);
+    }
 }

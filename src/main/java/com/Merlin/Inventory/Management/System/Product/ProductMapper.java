@@ -21,6 +21,6 @@ public class ProductMapper {
     }
 
     public ProductResponseDto toProductResponseDto(Product product) {
-        return new ProductResponseDto(product.getId(), product.getProductName(),product.isCountable(),product.getBarcode(),product.getDescription(), product.getSellingPrice(), product.getMinimumQuantity(), product.getSupplier().getId(), product.getCategory().getId(), product.isActive());
+        return new ProductResponseDto(product.getId(), product.getProductName(),product.isCountable(),product.getBarcode(),product.getDescription(), product.getSellingPrice(), product.getMinimumQuantity(),product.getCurrentStock(), product.getSupplier().getId(), product.getCategory().getId(), product.isActive());
     }
 }

@@ -14,4 +14,6 @@ public interface StockAdjustmentRepository extends JpaRepository<StockAdjustment
 
     @Query("SELECT sa FROM StockAdjustment sa WHERE sa.approvalDate BETWEEN :start AND :end AND sa.status = 'APPROVED'")
     List<StockAdjustment> findAllStockAdjustmentBetweenReportedDate(@Param("start") LocalDate start, @Param("end") LocalDate end);
+
+    List<StockAdjustment> findAllByOrderByReportedDateDesc();
 }

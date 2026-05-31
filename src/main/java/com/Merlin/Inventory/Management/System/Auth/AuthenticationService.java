@@ -43,6 +43,6 @@ public class AuthenticationService {
 
         var jwt = jwtService.generateToken(user);
 
-        return new AuthTokenResponse(jwt, user.isMustChangePassword(),user.getRole());
+        return new AuthTokenResponse(jwt, user.isMustChangePassword(),user.getRole(), user.getFirstName());
     }
 }

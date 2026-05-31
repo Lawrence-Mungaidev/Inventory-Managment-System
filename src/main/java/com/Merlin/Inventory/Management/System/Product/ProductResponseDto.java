@@ -12,6 +12,7 @@ public record ProductResponseDto(
         String description,
         BigDecimal sellingPrice,
         Double minimumQuantity ,
+        Double currentStock,
         Long supplierId,
         Long categoryId,
         boolean isActive

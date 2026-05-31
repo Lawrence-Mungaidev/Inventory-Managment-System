@@ -11,8 +11,8 @@ public record StockResponseDto(
         String supplierName,
         String addedByName,
         String approvedByName,
+        LocalDate arrivalDate,
         LocalDate approvedDate,
         Status status
-
 ) {
 }
