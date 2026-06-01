@@ -23,7 +23,7 @@ public class BlackListedTokenService {
         return blackListedTokenRepository.existsByToken(token);
     }
 
-    // Run every midnight to clean up expired tokens
+
     @Scheduled(cron = "0 0 0 * * *")
     public void cleanExpiredTokens() {
         blackListedTokenRepository.deleteByExpiresAtBefore(LocalDateTime.now());

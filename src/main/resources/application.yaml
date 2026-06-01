@@ -7,9 +7,9 @@ spring:
   application:
     name: Inventory-Management-System
   datasource:
-    url: jdbc:mysql://localhost:3306/INVENTORY_SYSTEM
-    username: merlin
-    password: merlin
+    url: {SPRING_DATASOURCE_URL}
+    username: {SPRING_DATASOURCE_USERNAME}
+    password: {SPRING_DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -19,8 +19,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: mungailawrence52@gmail.com
-    password: srwzujhkgcxmnwto
+    username: {MAIL_USERNAME}
+    password: {MAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -28,11 +28,11 @@ spring:
           starttls:
             enable: true
 jwt:
-  secret: qssL31Qgw5DUn/XySPLlMzH2Itidp3ItCOCfdz5gaCWxBw1EdhUFK7fREYyl+kuIpAzQ+3dwnPHHw/qgkWXy0w==
-  expiration: 61200000
+  secret: {JWT_SECRET}
+  expiration: {JWT_EXPIRATION}
 mpesa:
-    consumer-key: CGIlnd5x5uN7QryC91gutqawFojWNqo8fduTVonA3uz9L05O
-    consumer-secret: wYk2AApynB1UMBOVzGL4zY3nVaWkI36uftEO3BpksihUtAK00DbojmA7cUGBrA84
+    consumer-key: {MPESA_CONSUMER_KEY}
+    consumer-secret: {MPESA_CONSUMER_SECRET}
     short-code: 174379
     passkey: bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919
-    callback-url: http://localhost:8080/api/mpesa/callback
+    callback-url: {MPESA_CALLBACK_URL}

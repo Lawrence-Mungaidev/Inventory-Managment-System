@@ -57,7 +57,7 @@ public class ProductService {
 
     private String generateCode(Product product){
         String prefix = product.getProductName().length() >= 3
-                ? product.getProductName().substring(0, 3).toUpperCase()
+                ? product.getProductName().substring(0, 4).toUpperCase()
                 : product.getProductName().toUpperCase();
 
         long count = productRepository.count();
