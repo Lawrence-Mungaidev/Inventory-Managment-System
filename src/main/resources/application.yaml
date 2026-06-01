@@ -8,8 +8,8 @@ spring:
     name: Inventory-Management-System
   datasource:
     url: {SPRING_DATASOURCE_URL}
-    username: {SPRING_DATASOURCE_USERNAME}
-    password: {SPRING_DATASOURCE_PASSWORD}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -19,8 +19,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: {MAIL_USERNAME}
-    password: {MAIL_PASSWORD}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -28,11 +28,11 @@ spring:
           starttls:
             enable: true
 jwt:
-  secret: {JWT_SECRET}
-  expiration: {JWT_EXPIRATION}
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
 mpesa:
-    consumer-key: {MPESA_CONSUMER_KEY}
-    consumer-secret: {MPESA_CONSUMER_SECRET}
+    consumer-key: ${MPESA_CONSUMER_KEY}
+    consumer-secret: ${MPESA_CONSUMER_SECRET}
     short-code: 174379
     passkey: bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919
-    callback-url: {MPESA_CALLBACK_URL}
+    callback-url: ${MPESA_CALLBACK_URL}
