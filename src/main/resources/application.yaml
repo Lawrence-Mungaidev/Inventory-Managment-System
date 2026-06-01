@@ -25,7 +25,7 @@ spring:
       mail:
         smtp:
           auth: true
-          starttls:
+          ssl:
             enable: true
 jwt:
   secret: ${JWT_SECRET}
