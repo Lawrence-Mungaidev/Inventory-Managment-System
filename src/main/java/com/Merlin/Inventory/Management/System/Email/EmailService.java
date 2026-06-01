@@ -17,7 +17,7 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
-    @Async
+
     public void  sendEmail(String to, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
 
