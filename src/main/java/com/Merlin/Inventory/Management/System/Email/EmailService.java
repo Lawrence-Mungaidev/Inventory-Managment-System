@@ -1,10 +1,11 @@
 package com.Merlin.Inventory.Management.System.Email;
 
 
+import com.resend.Resend;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import com.resend.services.emails.model.CreateEmailOptions;
+import com.resend.services.emails.model.CreateEmailResponse;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -12,25 +13,23 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EmailService {
 
-    private final JavaMailSender mailSender;
-
-    @Value("${spring.mail.username}")
-    private String fromEmail;
+    @Value("${resend.api.key}")
+    private String resendApiKey;
 
     @Async
     public void sendEmail(String to, String subject, String body) {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(to);
-            message.setSubject(subject);
-            message.setText(body);
-            message.setFrom(fromEmail);
-            mailSender.send(message);
+            Resend resend = new Resend(resendApiKey);
+            CreateEmailOptions request = CreateEmailOptions.builder()
+                    .from("onboarding@resend.dev")
+                    .to(to)
+                    .subject(subject)
+                    .text(body)
+                    .build();
+            CreateEmailResponse response = resend.emails().send(request);
             System.out.println("Email sent successfully to: " + to);
         } catch (Exception e) {
-            System.err.println("Failed to send email to: " + to);
-            e.printStackTrace();
+            System.err.println("Failed to send email: " + e.getMessage());
         }
     }
-
 }
