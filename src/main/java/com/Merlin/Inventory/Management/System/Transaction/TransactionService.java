@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -102,7 +103,7 @@ public class TransactionService {
         } else {
             throw new BusinessRuleException("Invalid Payment Method");
         }
-        savedTransaction.setReceiptNumber("RCP-" + transaction.getId());
+        transaction.setReceiptNumber("RCP-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
 
         var finalSavedTransaction = transactionRepository.save(savedTransaction);
 
