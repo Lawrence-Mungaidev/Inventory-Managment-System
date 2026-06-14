@@ -102,7 +102,7 @@ public class TransactionService {
         } else {
             throw new BusinessRuleException("Invalid Payment Method");
         }
-        transaction.setReceiptNumber("RCP-" + transaction.getId());
+        savedTransaction.setReceiptNumber("RCP-" + transaction.getId());
 
         var finalSavedTransaction = transactionRepository.save(savedTransaction);
 
