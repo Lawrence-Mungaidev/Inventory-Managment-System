@@ -15,7 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/ChatBot")
+@RequestMapping("api/chatbot")
 public class ChatBotController {
 
     private final ProductService productService;
