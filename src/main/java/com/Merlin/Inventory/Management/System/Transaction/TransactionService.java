@@ -51,6 +51,7 @@ public class TransactionService {
 
         transaction.setTotalAmount(totalAmount);
         transaction.setCreatedBy(authenticatedUser);
+        transaction.setReceiptNumber("RCP-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
 
         BigDecimal balance;
 
@@ -103,7 +104,6 @@ public class TransactionService {
         } else {
             throw new BusinessRuleException("Invalid Payment Method");
         }
-        transaction.setReceiptNumber("RCP-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
 
         var finalSavedTransaction = transactionRepository.save(savedTransaction);
 
