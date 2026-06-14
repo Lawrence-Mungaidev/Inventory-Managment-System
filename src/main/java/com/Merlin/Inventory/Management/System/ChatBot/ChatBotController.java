@@ -7,8 +7,12 @@ import com.Merlin.Inventory.Management.System.StockAdjustment.StockAdjustmentSer
 import com.Merlin.Inventory.Management.System.Transaction.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,27 +32,24 @@ public class ChatBotController {
     private String chatbotApiKey;
 
     @GetMapping("/context")
-    private ResponseEntity<?> getContext(
-            @RequestHeader("X-Chatbot-Key") String key,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+    public ResponseEntity<?> getContext(@RequestParam String message) {
+        try {
+            String n8nUrl = "https://automations.xtremelemiso.site/webhook-test/b1a62c65-ef52-4efb-8200-6d34fbe3dc2a?message=" + message;
 
-        if (!key.equals(chatbotApiKey)) {
-            return ResponseEntity.status(403).body("Unauthorized");
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-Chatbot-Key", chatbotApiKey);
+
+            HttpEntity<Void> request = new HttpEntity<>(headers);
+            ResponseEntity<Map> n8nResponse = restTemplate.exchange(n8nUrl, HttpMethod.GET, request, Map.class);
+
+            return ResponseEntity.ok(n8nResponse.getBody());
+
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("reply", "Sorry, the assistant is unavailable right now.");
+            return ResponseEntity.ok(error);
         }
-
-        Map<String, Object> context = new HashMap<>();
-
-        context.put("products", productService.findAll());
-        context.put("Transactions", transactionService.getAllTransactions(page, size));
-        context.put("StockRequest", stockService.getAllStocks(page, size));
-        context.put("StockAdjustments", stockAdjustmentService.getAllStockAdjustments(page, size));
-        context.put("Daily Report", reportService.getDailyReport());
-        context.put("Monthly Report", reportService.getMonthlyReport());
-
-
-        return ResponseEntity.ok(context);
-
     }
 
 
