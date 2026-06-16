@@ -63,7 +63,9 @@ public class ChatBotController {
 
             ResponseEntity<String> n8nResponse = restTemplate.exchange(n8nUrl, HttpMethod.POST, request, String.class);
             System.out.println("n8n raw response: " + n8nResponse.getBody());
-            return ResponseEntity.ok(n8nResponse.getBody());
+            Map<String, String> result = new HashMap<>();
+            result.put("reply", n8nResponse.getBody());
+            return ResponseEntity.ok(result);
 
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();
