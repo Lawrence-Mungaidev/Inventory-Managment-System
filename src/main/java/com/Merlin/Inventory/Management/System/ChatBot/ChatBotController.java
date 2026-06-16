@@ -33,20 +33,33 @@ public class ChatBotController {
     private String chatbotApiKey;
 
     @GetMapping("/context")
-    public ResponseEntity<?> getContext(@RequestParam String message) {
+    public ResponseEntity<?> getContext(
+            @RequestParam String message,
+             @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
         try {
             String n8nUrl = "https://automations.xtremelemiso.site/webhook-test/b1a62c65-ef52-4efb-8200-6d34fbe3dc2a";
+
+            Map<String, Object> inventoryContext = new HashMap<>();
+            inventoryContext.put("products", productService.findAll());
+            inventoryContext.put("transactions", transactionService.getAllTransactions(page, size));
+            inventoryContext.put("dailyReport", reportService.getDailyReport());
+            inventoryContext.put("stock request", stockService.getAllStocks(page, size));
+            inventoryContext.put("Stock Adjustments", stockAdjustmentService.getAllStockAdjustments(page, size));
+            inventoryContext.put("monthlyReport", reportService.getMonthlyReport());
+
+            Map<String, Object> body = new HashMap<>();
+            body.put("message", message);
+            body.put("sessionId", "quick-save-session");
+            body.put("context", inventoryContext);
 
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("X-Chatbot-Key", chatbotApiKey);
 
-            Map<String, String> body = new HashMap<>();
-            body.put("message", message);
-            body.put("sessionId", "quick-save-session");
-
-            HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
             ResponseEntity<Map> n8nResponse = restTemplate.exchange(n8nUrl, HttpMethod.POST, request, Map.class);
 
             return ResponseEntity.ok(n8nResponse.getBody());
