@@ -60,8 +60,9 @@ public class ChatBotController {
             headers.set("X-Chatbot-Key", chatbotApiKey);
 
             HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
-            ResponseEntity<Map> n8nResponse = restTemplate.exchange(n8nUrl, HttpMethod.POST, request, Map.class);
 
+            ResponseEntity<String> n8nResponse = restTemplate.exchange(n8nUrl, HttpMethod.POST, request, String.class);
+            System.out.println("n8n raw response: " + n8nResponse.getBody());
             return ResponseEntity.ok(n8nResponse.getBody());
 
         } catch (Exception e) {
