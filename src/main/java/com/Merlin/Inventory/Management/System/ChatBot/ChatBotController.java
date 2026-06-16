@@ -13,6 +13,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.http.MediaType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,14 +35,19 @@ public class ChatBotController {
     @GetMapping("/context")
     public ResponseEntity<?> getContext(@RequestParam String message) {
         try {
-            String n8nUrl = "https://automations.xtremelemiso.site/webhook-test/b1a62c65-ef52-4efb-8200-6d34fbe3dc2a?message=" + message;
+            String n8nUrl = "https://automations.xtremelemiso.site/webhook-test/b1a62c65-ef52-4efb-8200-6d34fbe3dc2a";
 
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("X-Chatbot-Key", chatbotApiKey);
 
-            HttpEntity<Void> request = new HttpEntity<>(headers);
-            ResponseEntity<Map> n8nResponse = restTemplate.exchange(n8nUrl, HttpMethod.GET, request, Map.class);
+            Map<String, String> body = new HashMap<>();
+            body.put("message", message);
+            body.put("sessionId", "quick-save-session");
+
+            HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
+            ResponseEntity<Map> n8nResponse = restTemplate.exchange(n8nUrl, HttpMethod.POST, request, Map.class);
 
             return ResponseEntity.ok(n8nResponse.getBody());
 
