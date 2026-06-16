@@ -39,7 +39,7 @@ public class ChatBotController {
             @RequestParam(defaultValue = "20") int size
     ) {
         try {
-            String n8nUrl = "https://automations.xtremelemiso.site/webhook-test/b1a62c65-ef52-4efb-8200-6d34fbe3dc2a";
+            String n8nUrl = "https://automations.xtremelemiso.site/webhook/b1a62c65-ef52-4efb-8200-6d34fbe3dc2a";
 
             Map<String, Object> inventoryContext = new HashMap<>();
             inventoryContext.put("products", productService.findAll());
