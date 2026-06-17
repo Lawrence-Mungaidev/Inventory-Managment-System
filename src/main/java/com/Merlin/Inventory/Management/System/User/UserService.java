@@ -97,9 +97,13 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void deactivateUser(Long userId){
+    public void deactivateUser(Long userId, User authenticatedUser){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (user == authenticatedUser){
+            throw new BusinessRuleException("You cannot deactivate yourself");
+        }
 
         if(!user.isActive()){
             throw new ResponseStatusException(HttpStatus.CONFLICT,"User is already inactive");

@@ -48,8 +48,8 @@ public class UserController {
 
     @PatchMapping("/deactivate/{user-id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deactivateUser(@PathVariable("user-id") Long userId){
-        userService.deactivateUser(userId);
+    public ResponseEntity<Void> deactivateUser(@PathVariable("user-id") Long userId, @AuthenticationPrincipal User authenticatedUser){
+        userService.deactivateUser(userId, authenticatedUser);
         return ResponseEntity.noContent().build();
     }
 
