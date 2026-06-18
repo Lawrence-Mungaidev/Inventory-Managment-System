@@ -31,3 +31,5 @@ mpesa:
 chatbot:
   api:
     key: ${CHATBOT_API_KEY}
+redis:
+  url: ${REDIS_URL}

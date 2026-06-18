@@ -1,18 +1,15 @@
 package com.Merlin.Inventory.Management.System.Auth;
 
 import com.Merlin.Inventory.Management.System.Config.JwtService;
-import com.Merlin.Inventory.Management.System.TokenBlackListing.BlackListedTokenService;
+import com.Merlin.Inventory.Management.System.Config.TokenBlackListingServices;
 import com.Merlin.Inventory.Management.System.User.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.util.Date;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
@@ -20,7 +17,7 @@ import java.time.ZoneId;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
-    private final BlackListedTokenService blackListedTokenService;
+    private final TokenBlackListingServices tokenBlackListingServices;
     private final JwtService jwtService;
     private final UserService userService;
 
@@ -38,12 +35,9 @@ public class AuthenticationController {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            LocalDateTime expiresAt = jwtService.extractExpiration(token)
-                    .toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDateTime();
+            Date expiresAt = jwtService.extractExpiration(token);
 
-            blackListedTokenService.blacklistToken(token, expiresAt);
+            tokenBlackListingServices.blacklistTokens(token, expiresAt);
         }
 
         return ResponseEntity.ok("Logged out successfully");

@@ -1,6 +1,5 @@
 package com.Merlin.Inventory.Management.System.Config;
 
-import com.Merlin.Inventory.Management.System.TokenBlackListing.BlackListedTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -24,7 +22,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-    private final BlackListedTokenService blackListedTokenService;
+    private final TokenBlackListingServices tokenBlackListing;
 
     @Override
     protected void doFilterInternal(
@@ -60,7 +58,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        if (blackListedTokenService.isBlacklisted(jwt)) {
+        if (tokenBlackListing.isBlackListed(jwt)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
             response.getWriter().write(
