@@ -1,5 +1,7 @@
 package com.Merlin.Inventory.Management.System.Config;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,38 +27,54 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private final TokenBlackListingServices tokenBlackListing;
 
     @Override
-    protected void doFilterInternal(
-            @NonNull HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain) throws ServletException, IOException {
+        protected void doFilterInternal(
+                @NonNull HttpServletRequest request,
+                @NonNull HttpServletResponse response,
+                @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        final String authorizationHeader = request.getHeader("Authorization");
-        final String jwt;
-        final String userEmail;
+            final String authorizationHeader = request.getHeader("Authorization");
+            final String jwt;
+            final String userEmail;
 
-        if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")){
-            filterChain.doFilter(request, response);
+            if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")){
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            jwt = authorizationHeader.substring(7);
+
+        try {
+            userEmail = jwtService.extractUserName(jwt);
+        } catch (ExpiredJwtException e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write(
+                    "{\"message\": \"Token has expired. Please login again.\"}"
+            );
+            return;
+        } catch (JwtException e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write(
+                    "{\"message\": \"Invalid token.\"}"
+            );
             return;
         }
 
-        jwt = authorizationHeader.substring(7);
+            if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetail = this.userDetailsService.loadUserByUsername(userEmail);
 
-        userEmail = jwtService.extractUserName(jwt);
+                if(jwtService.validateToken(jwt, userDetail)) {
+                    UsernamePasswordAuthenticationToken authentication= new UsernamePasswordAuthenticationToken(
+                            userDetail,
+                            null,
+                            userDetail.getAuthorities()
+                    );
 
-        if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetail = this.userDetailsService.loadUserByUsername(userEmail);
-
-            if(jwtService.validateToken(jwt, userDetail)) {
-                UsernamePasswordAuthenticationToken authentication= new UsernamePasswordAuthenticationToken(
-                        userDetail,
-                        null,
-                        userDetail.getAuthorities()
-                );
-
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             }
-        }
 
         if (tokenBlackListing.isBlackListed(jwt)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
