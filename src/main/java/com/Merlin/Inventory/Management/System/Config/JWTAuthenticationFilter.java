@@ -43,23 +43,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
             jwt = authorizationHeader.substring(7);
 
-        try {
             userEmail = jwtService.extractUserName(jwt);
-        } catch (ExpiredJwtException e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.getWriter().write(
-                    "{\"message\": \"Token has expired. Please login again.\"}"
-            );
-            return;
-        } catch (JwtException e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.getWriter().write(
-                    "{\"message\": \"Invalid token.\"}"
-            );
-            return;
-        }
+
 
             if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetail = this.userDetailsService.loadUserByUsername(userEmail);
