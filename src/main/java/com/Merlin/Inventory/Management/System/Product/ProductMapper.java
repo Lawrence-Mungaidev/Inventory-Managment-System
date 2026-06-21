@@ -1,7 +1,5 @@
 package com.Merlin.Inventory.Management.System.Product;
 
-import com.Merlin.Inventory.Management.System.Category.Category;
-import com.Merlin.Inventory.Management.System.Supplier.Supplier;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,4 +21,9 @@ public class ProductMapper {
     public ProductResponseDto toProductResponseDto(Product product) {
         return new ProductResponseDto(product.getId(), product.getProductName(),product.isCountable(),product.getBarcode(),product.getDescription(), product.getSellingPrice(), product.getMinimumQuantity(),product.getCurrentStock(), product.getSupplier().getId(), product.getCategory().getId(), product.isActive());
     }
+
+    public ProductLookUpDto ProductLookUpDto(Product product){
+        return  new ProductLookUpDto(product.getId(), product.getProductName(),product.isCountable(),product.getBarcode(),product.getDescription(), product.getSellingPrice(), product.getMinimumQuantity(),product.isActive());
+    }
+
 }

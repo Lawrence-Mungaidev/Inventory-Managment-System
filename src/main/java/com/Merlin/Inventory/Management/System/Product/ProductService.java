@@ -7,10 +7,13 @@ import com.Merlin.Inventory.Management.System.Exception.DuplicateResourceExcepti
 import com.Merlin.Inventory.Management.System.Exception.ResourceNotFoundException;
 import com.Merlin.Inventory.Management.System.Supplier.Supplier;
 import com.Merlin.Inventory.Management.System.Supplier.SupplierRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.List;
 
 @Service
@@ -21,6 +24,12 @@ public class ProductService {
     private final ProductMapper productMapper;
     private final SupplierRepository supplierRepository;
     private final CategoryRepository categoryRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final ObjectMapper objectMapper;
+
+    private static final String BARCODE_CACHE_PREFIX = "product:barcode:";
+    private static final Duration CACHE_TTL = Duration.ofMinutes(30);
+
 
     public ProductResponseDto create(ProductDto dto) {
         Product product = productMapper.toProduct(dto);
@@ -69,6 +78,7 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(()-> new ResourceNotFoundException("Product Not Found"));
 
+        String oldBarcode = product.getBarcode();
 
         if(dto.productName() != null){
             product.setProductName(dto.productName());
@@ -104,6 +114,8 @@ public class ProductService {
 
         var savedProduct = productRepository.save(product);
 
+        redisTemplate.delete("product:barcode:" + oldBarcode);
+
         return productMapper.toProductResponseDto(savedProduct);
     }
 
@@ -137,6 +149,8 @@ public class ProductService {
         product.setActive(false);
 
         productRepository.save(product);
+
+        redisTemplate.delete("product:barcode:" + product.getBarcode());
     }
 
     public void activateProduct(Long productId){
@@ -150,6 +164,8 @@ public class ProductService {
         product.setActive(true);
 
         productRepository.save(product);
+
+        redisTemplate.delete("product:barcode:" + product.getBarcode());
     }
 
     public List<ProductResponseDto> findAll(){
@@ -167,18 +183,30 @@ public class ProductService {
                 .toList();
     }
 
-    public List<ProductResponseDto> getProductByName(String productName){
+    public List<ProductLookUpDto> getProductByName(String productName){
         return productRepository.findByProductNameContaining(productName)
                 .stream()
-                .map(productMapper :: toProductResponseDto)
+                .map(productMapper :: ProductLookUpDto)
                 .toList();
     }
 
-    public ProductResponseDto findByBarcode(String barcode){
+    public ProductLookUpDto findByBarcode(String barcode){
+        String cacheKey = BARCODE_CACHE_PREFIX + barcode;
+
+        Object cached = redisTemplate.opsForValue().get(cacheKey);
+
+        if (cached != null) {
+            return objectMapper.convertValue(cached, ProductLookUpDto.class);
+        }
+
         Product product = productRepository.findByBarcode(barcode)
                 .orElseThrow(() -> new ResourceNotFoundException("Product Not Found"));
 
-        return productMapper.toProductResponseDto(product);
+        ProductLookUpDto productLookUpDto = productMapper.ProductLookUpDto(product);
+
+        redisTemplate.opsForValue().set(cacheKey, productLookUpDto, CACHE_TTL);
+
+        return productLookUpDto;
     }
 
     public ProductResponseDto findById(Long productId){

@@ -68,12 +68,12 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<ProductResponseDto>> getAllProductsByProductName(@RequestParam("productName") String productName) {
+    public ResponseEntity<List<ProductLookUpDto>> getAllProductsByProductName(@RequestParam("productName") String productName) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.getProductByName(productName));
     }
 
     @GetMapping("/barcode/{barcode}")
-    public ResponseEntity<ProductResponseDto> getProductByBarcode(@PathVariable("barcode") String barcode) {
+    public ResponseEntity<ProductLookUpDto> getProductByBarcode(@PathVariable("barcode") String barcode) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.findByBarcode(barcode));
     }
 
