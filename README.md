@@ -12,7 +12,7 @@ A backend REST API system built on Spring Boot to help small retail owners manag
 Swagger UI: https://quick-save-mini-mart.up.railway.app/swagger-ui/index.html
 
 
-![App SwaggerUI](Images/SwaggerUI.png)
+![App SwaggerUI](Images/swaggerUi.png)
  
  
 ## ROLES
