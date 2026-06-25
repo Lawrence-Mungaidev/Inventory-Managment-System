@@ -1,17 +1,17 @@
-## # QUICK SAVE MINI MART — INVENTORY MANAGEMENT SYSTEM
+## # INVENTORY MANAGEMENT SYSTEM
  
 A backend REST API system built on Spring Boot to help small retail owners manage products and track stock in real time. The system has two roles, **ADMIN** and **CASHIER**, with clearly defined permissions, automated notifications, and a full sales/payment workflow including M-Pesa.
  
 ## Live Demo: https://quick-save-mini-mart.vercel.app/login
 
+![App dashboard Screenshot](Images/dashboard.png)
+
 ![App POS Screenshhot1](Images/POS.png)
 
-![App dashboard Screenshot](Images/dashboard.png)
  
 Swagger UI: https://quick-save-mini-mart.up.railway.app/swagger-ui/index.html
  
-<!-- TODO: Replace with a screenshot of the actual running app (dashboard / POS screen / mobile receipt flow) instead of the Swagger UI -->
-![App Screenshot](Images/appScreenshot.png)
+![App Screenshot](Images/SwaggerUI.png)
  
 ## ROLES
  
@@ -54,7 +54,6 @@ Swagger UI: https://quick-save-mini-mart.up.railway.app/swagger-ui/index.html
 | MySQL | Primary database |
 | Redis | Caching, rate limiting, JWT blacklist |
 | Spring Security & JWT | Authentication and authorization |
-| Bucket4j | Rate limiting |
 | M-Pesa STK Push | Mobile payments |
 | Resend | Email notifications |
 | n8n | Chatbot webhook backend |
