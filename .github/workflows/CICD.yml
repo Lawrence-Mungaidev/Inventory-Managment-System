@@ -12,6 +12,30 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: quicksave_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,11 +43,17 @@ jobs:
       - name: Run tests
         run: mvn test
         env:
+          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/quicksave_test
+          SPRING_DATASOURCE_USERNAME: root
+          SPRING_DATASOURCE_PASSWORD: root
+          REDIS_URL: redis://localhost:6379
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          JWT_EXPIRATION: ${{ secrets.JWY_EXPIRATION }}
+          JWT_EXPIRATION: ${{ secrets.JWT_EXPIRATION }}
           MPESA_CONSUMER_KEY: ${{ secrets.MPESA_CONSUMER_KEY }}
           MPESA_CONSUMER_SECRET: ${{ secrets.MPESA_CONSUMER_SECRET }}
-
+          MPESA_CALLBACK_URL: ${{ secrets.MPESA_CALLBACK_URL }}
+          CHATBOT_API_KEY: ${{ secrets.CHATBOT_API_KEY }}
       - name: Build the project
         run: mvn clean package -DskipTests
 
