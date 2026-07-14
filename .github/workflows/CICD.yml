@@ -18,6 +18,11 @@ jobs:
 
       - name: Run tests
         run: mvn test
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_EXPIRATION: ${{ secrets.JWY_EXPIRATION }}
+          MPESA_CONSUMER_KEY: ${{ secrets.MPESA_CONSUMER_KEY }}
+          MPESA_CONSUMER_SECRET: ${{ secrets.MPESA_CONSUMER_SECRET }}
 
       - name: Build the project
         run: mvn clean package -DskipTests
