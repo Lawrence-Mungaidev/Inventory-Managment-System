@@ -14,15 +14,12 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final NotificationMapper notificationMapper;
-    private final UserRepository userRepository;
 
     public void createNotification(User receiver, String message, NotificationType notificationType){
         Notification notification = new Notification(receiver,message,notificationType);
 
         notification.setReceiver(receiver);
-        var savedNotification = notificationRepository.save(notification);
-
-        notificationMapper.toNotificationResponseDto(savedNotification);
+        notificationRepository.save(notification);
     }
 
     public void markNotificationAsRead(Long notificationId){
